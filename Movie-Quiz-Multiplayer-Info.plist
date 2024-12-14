@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.852150473756-hk4sprponve66g8lslmdnspi4bqbcfbh</string>
+			</array>
+		</dict>
+		<dict/>
+	</array>
+	<key>GIDClientID</key>
+	<string>852150473756-hk4sprponve66g8lslmdnspi4bqbcfbh.apps.googleusercontent.com</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>CircularStd-Medium.otf</string>
+		<string>CircularSpUIv3T-Book.ttf</string>
+		<string>CircularSpUIv3T-Bold.ttf</string>
+		<string>CircularStd-Book.otf</string>
+		<string>CircularStd-Black.otf</string>
+		<string>Circular-Std-Book.ttf</string>
+		<string>ScoreFont.ttf</string>
+		<string>DIN-Bold</string>
+		<string>DIN-Black</string>
+		<string>DIN-Medium</string>
+		<string></string>
+	</array>
+</dict>
+</plist>
