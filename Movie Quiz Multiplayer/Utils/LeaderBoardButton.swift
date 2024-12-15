@@ -8,10 +8,11 @@ struct LeaderboardButton: View {
                     VStack(alignment: .leading){
                         Text("Leaderboard")
                             .tracking(-0.5)
-                            .font(Font.custom("CircularSpUIv3T-Bold", size: 23))
+                            .font(Font.custom("CircularSpUIv3T-Bold", size: 18))
                             .foregroundColor(.white)
                         
-                        Text("Secure your spot on the leaderboard for four days straight\n and snag a Weekday Pass for PVR INOX!")
+//                        Text("Secure your spot on the leaderboard for four days straight\n and snag a Weekday Pass for PVR INOX!")
+                        Text("Win and Snag a Weekday Pass!")
                             .tracking(-0.5)
                             .font(Font.custom("CircularSpUIv3T-Book", size: 9))
                             .foregroundColor(Color(uiColor: hexStringToUIColor(hex: "CEB0AE")))
@@ -21,9 +22,9 @@ struct LeaderboardButton: View {
                         Image("pvr")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 125)
+                        .frame(width: 85)
                         .padding(.top, -3)
-                        .padding(.leading, -5)
+                        .padding(.leading, -3)
                         
                         
 
@@ -38,15 +39,15 @@ struct LeaderboardButton: View {
                 }
                 .padding(7)
                 .background(Color(uiColor: hexStringToUIColor(hex: "6F1612")))
-                .cornerRadius(13)
+                .cornerRadius(7)
             
                 ZStack(alignment: .trailing) {
                     Image("crown")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 125)
-                        .padding(.top, -133)
-                        .padding(.leading, 251)
+                        .frame(width: 85)
+                        .padding(.top, -93)
+                        .padding(.leading, 284)
                         .opacity(0.95)
                         
                     

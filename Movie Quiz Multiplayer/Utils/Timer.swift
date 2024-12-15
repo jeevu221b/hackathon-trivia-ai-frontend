@@ -16,15 +16,14 @@ struct Clock: View {
                     .contentTransition(.numericText())
                     .font(.custom("DINAlternate-Bold", size: 20))
                     .foregroundStyle(textColor())
-                    .opacity(0.8)
                     .scaleEffect(scaleEffect)
                     .animation(.easeInOut(duration: 0.5), value: scaleEffect)
             }
         }
         .onChange(of: counter) { newValue in
-            if newValue % 30 == 0 {
+            if newValue % 10 == 0 || newValue % 7 == 0 {
                 withAnimation {
-                    scaleEffect = 1.2
+                    scaleEffect = 1.6
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     withAnimation {
@@ -45,9 +44,9 @@ struct Clock: View {
     func textColor() -> Color {
         let remainingTime = countTo - counter
         if remainingTime < 10 {
-            return  Color(uiColor: hexStringToUIColor(hex: "FFB4B1"))
+            return  Color(uiColor: hexStringToUIColor(hex: "FF918C"))
         } else if remainingTime < 30 {
-            return Color(uiColor: hexStringToUIColor(hex: "BEB36D"))
+            return Color(uiColor: hexStringToUIColor(hex: "FFD582"))
         } else {
             return .white
         }

@@ -103,6 +103,11 @@ struct ScreenFive: View {
             VStack {
                 VStack(spacing: 0) {
                     Menu()
+                    PartyBox()
+                        .padding(.top, 30)
+                        .padding(.bottom, 20)
+                        .padding(.leading, 18)
+                        .padding(.trailing, 20)
                     
                     VStack(alignment: .leading, spacing: 0) {
                         Text("Levels")
@@ -179,6 +184,8 @@ struct LevelButton: View {
     let levelId: String
     let score: Int
     @EnvironmentObject private var navigationStore: NavigationStore
+    @EnvironmentObject private var socketHandler: SocketHandler
+    @EnvironmentObject var AppState: Game
     @State var isTapped = false
     
     var body: some View {
@@ -211,6 +218,8 @@ struct LevelButton: View {
             .scaleEffect(isTapped ? 1.5 : 1)
             .animation(.spring(response: 0.4, dampingFraction: 0.6))
             .onTapGesture {
+                socketHandler.updatePartyData(name: String(number) , id: "level", value: levelId, sessionId: AppState.partySession)
+                
                 withAnimation(.easeInOut(duration: 0.3)) {
                     isTapped.toggle()
                 }
@@ -232,4 +241,5 @@ struct LevelButton: View {
         .statusBar(hidden: true)
         .environmentObject(NavigationStore())
         .environmentObject(Game())
+    
 }

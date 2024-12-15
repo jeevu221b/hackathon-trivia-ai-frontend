@@ -91,16 +91,6 @@ struct BigStarsView: View {
 }
 
 
-struct ScoreView: View {
-    @Binding var score: Int
-    
-    var body: some View {
-        VStack(spacing: 20) {
-            Text("\(score)")
-                .contentTransition(.numericText())
-        }
-    }
-}
 
 
 func getLevel(by levelId: String) -> Level? {
@@ -121,3 +111,6 @@ func getSubcategoryNameByLevelId(_ levelId: String) -> String? {
     
     return nil
 }
+
+
+

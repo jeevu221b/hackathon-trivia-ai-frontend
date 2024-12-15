@@ -2,19 +2,14 @@ import SwiftUI
 import Firebase
 import SwiftfulFirebaseAuth
 import UIKit
-
-
-
-
 struct ContentView: View {
     @StateObject private var navigationStore = NavigationStore()
     @StateObject private var AppState = Game()
-
+    @StateObject private var socketHandler = SocketHandler()
 
     init() {
         FirebaseApp.configure()
     }
-
     var body: some View {
         NavigationView {
             if AppState.isLoggedIn {
@@ -26,6 +21,7 @@ struct ContentView: View {
                             path.view
                                 .environmentObject(navigationStore)
                                 .environmentObject(AppState)
+                                .environmentObject(socketHandler)
                         }
                 }
                 .swipeGesture(navigationStore: navigationStore, AppState: AppState)
@@ -33,20 +29,19 @@ struct ContentView: View {
                 ScreenOne()
                     .environmentObject(navigationStore)
                     .environmentObject(AppState)
+                    .environmentObject(socketHandler)
             }
         }.environmentObject(AppState)
+            .environmentObject(socketHandler)
          .onAppear {
                 AppState.checkLoggedInUser()
             }
     }
 }
-
 struct SwipeGesture: ViewModifier {
     @ObservedObject var navigationStore: NavigationStore
     @ObservedObject var AppState: Game
     @State private var showBackAlert = false
-
-    
     func body(content: Content) -> some View {
         content
             .simultaneousGesture(
@@ -59,13 +54,19 @@ struct SwipeGesture: ViewModifier {
                                         showBackAlert = true
                                         return
                                     } else{
-                                        print("subcat")
-                                        print(AppState.currentSubCategory)
+                                        print("going back")
                                         navigationStore.popAllScreen6()
                                         navigationStore.pop()
                                         navigationStore.push(to: .screen5(AppState.currentSubCategory))
                                         return
                                     }
+                                } else if case .lobbyView = lastView {
+                                    if !AppState.partySession.isEmpty {
+                                        navigationStore.pop()
+                                        return
+                                    }
+                                    return
+                                        
                                 }
                             }
                             navigationStore.pop()
@@ -90,16 +91,12 @@ struct SwipeGesture: ViewModifier {
             }
     }
 }
-
 extension View {
     func swipeGesture(navigationStore: NavigationStore,  AppState: Game) -> some View {
         modifier(SwipeGesture(navigationStore: navigationStore,  AppState: AppState))
     }
 }
-
-
 #Preview {
     ContentView()
         .statusBar(hidden: true)
 }
-

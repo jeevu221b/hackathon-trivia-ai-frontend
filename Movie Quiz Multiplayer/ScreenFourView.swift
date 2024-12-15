@@ -12,14 +12,18 @@ struct ScreenFour: View {
     @State private var cat: Category?
     var body: some View {
         ZStack {
-            Color(uiColor: hexStringToUIColor(hex: "171819"))
-                .frame(alignment: .topLeading)
-                .edgesIgnoringSafeArea(.all)
+//            Color(uiColor: hexStringToUIColor(hex: "171819"))
+//                .frame(alignment: .topLeading)
+//                .edgesIgnoringSafeArea(.all)
             
             VStack {
                 VStack(spacing: 0){
                     Menu()
-                    
+                    PartyBox()
+                        .padding(.top, 30)
+                        .padding(.bottom, 20)
+                        .padding(.leading, 18)
+                        .padding(.trailing, 20)
                     VStack(alignment: .leading, spacing:0){
                         Text(cat?.name ?? "")
                     }
@@ -41,6 +45,7 @@ struct ScreenFour: View {
                 Spacer()
             }
         }
+        .background(Color(uiColor: hexStringToUIColor(hex: "171819")))
         .navigationBarBackButtonHidden(true)
         .onAppear {
             subcategories = DataManager.shared.getSubcategoriesForCategory(categoryId: catId)
@@ -53,7 +58,10 @@ struct GenreButton: View {
     let title: String
     let subcategoryId: String
     @EnvironmentObject private var navigationStore : NavigationStore
+    @EnvironmentObject private var socketHandler: SocketHandler
+    @EnvironmentObject var AppState: Game
     @State var isTapped = false;
+    
     
     var body: some View {
         VStack(alignment: .center){
@@ -80,13 +88,15 @@ struct GenreButton: View {
         .clipShape(RoundedRectangle(cornerRadius: 15))
                 .overlay(
                     RoundedRectangle(cornerRadius: 15)
-                        .stroke(Color(uiColor: hexStringToUIColor(hex: "167763")).opacity(0.20), lineWidth: 8)
+                        .stroke(Color(uiColor: hexStringToUIColor(hex: "FFFFF")).opacity(0.5), lineWidth: 8)
                 )
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 15))
         .scaleEffect(isTapped ? 1.5 : 1)
         .animation(.spring(response: 0.4, dampingFraction: 0.6))
         .onTapGesture {
+            socketHandler.updatePartyData(name: title , id: "subcategory", value: subcategoryId, sessionId: AppState.partySession)
+            
             withAnimation(.easeInOut(duration: 0.3)) {
                 isTapped.toggle()
             }

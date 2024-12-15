@@ -14,12 +14,22 @@
 		4F0C4D322BF4E22E00B9199B /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 4F0C4D312BF4E22E00B9199B /* GoogleSignIn */; };
 		4F0C4D342BF4E22E00B9199B /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4F0C4D332BF4E22E00B9199B /* GoogleSignInSwift */; };
 		4F0C4D362BF4E40100B9199B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4F0C4D352BF4E40100B9199B /* GoogleService-Info.plist */; };
+		4F2D79CB2C0C970500CD68D3 /* PartyBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2D79CA2C0C970500CD68D3 /* PartyBlock.swift */; };
 		4F38FE962BC93DB7004923F3 /* CircularSpUIv3T-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4F38FE912BC93DB7004923F3 /* CircularSpUIv3T-Bold.ttf */; };
 		4F38FE972BC93DB7004923F3 /* CircularStd-Book.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4F38FE922BC93DB7004923F3 /* CircularStd-Book.otf */; };
 		4F38FE982BC93DB7004923F3 /* CircularStd-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4F38FE932BC93DB7004923F3 /* CircularStd-Medium.otf */; };
 		4F38FE992BC93DB7004923F3 /* CircularSpUIv3T-Book.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4F38FE942BC93DB7004923F3 /* CircularSpUIv3T-Book.ttf */; };
 		4F38FE9A2BC93DB7004923F3 /* CircularStd-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4F38FE952BC93DB7004923F3 /* CircularStd-Black.otf */; };
 		4F3F4F9D2BE92F6C009D1A8A /* GifImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3F4F9C2BE92F6B009D1A8A /* GifImageView.swift */; };
+		4F5F2F132BFE6763005CFD33 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 4F5F2F122BFE6763005CFD33 /* Pow */; };
+		4F5F2F152BFF2A8E005CFD33 /* ScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5F2F142BFF2A8E005CFD33 /* ScoreView.swift */; };
+		4F5F2F172BFFEC0F005CFD33 /* PopcornView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5F2F162BFFEC0F005CFD33 /* PopcornView.swift */; };
+		4F5F2F1A2BFFF988005CFD33 /* SwiftfulLoadingIndicators in Frameworks */ = {isa = PBXBuildFile; productRef = 4F5F2F192BFFF988005CFD33 /* SwiftfulLoadingIndicators */; };
+		4F5F2F1C2C03C8D7005CFD33 /* LeaderBoardTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5F2F1B2C03C8D6005CFD33 /* LeaderBoardTimer.swift */; };
+		4F61E7E42C07B5AD009AEA7A /* LoaderFullScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F61E7E32C07B5AD009AEA7A /* LoaderFullScreen.swift */; };
+		4F6D903A2C090F2200ECBA42 /* LobbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6D90392C090F2200ECBA42 /* LobbyView.swift */; };
+		4F6D903C2C0B35AD00ECBA42 /* ScreenSixMultiplayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6D903B2C0B35AD00ECBA42 /* ScreenSixMultiplayer.swift */; };
+		4F6D903E2C0B3A2B00ECBA42 /* ScoreOnTopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6D903D2C0B3A2A00ECBA42 /* ScoreOnTopView.swift */; };
 		4F6F9D162BBC8FA9002E523F /* Movie_Quiz_MultiplayerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6F9D152BBC8FA9002E523F /* Movie_Quiz_MultiplayerApp.swift */; };
 		4F6F9D182BBC8FA9002E523F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6F9D172BBC8FA9002E523F /* ContentView.swift */; };
 		4F6F9D1A2BBC8FAC002E523F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F6F9D192BBC8FAC002E523F /* Assets.xcassets */; };
@@ -40,6 +50,8 @@
 		4FCA0ABC2BD06CB900A997BB /* Circular-Std-Book.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4FCA0ABB2BD06CB900A997BB /* Circular-Std-Book.ttf */; };
 		4FCB57B42BC9634F00C1A877 /* ThreeBounceAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCB57B32BC9634F00C1A877 /* ThreeBounceAnimation.swift */; };
 		4FCB57B62BC9791700C1A877 /* AppleLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCB57B52BC9791700C1A877 /* AppleLogin.swift */; };
+		4FD27BD72C0F7A3A004932C4 /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD27BD62C0F7A3A004932C4 /* Socket.swift */; };
+		4FD27BDA2C0F7A8B004932C4 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = 4FD27BD92C0F7A8B004932C4 /* SocketIO */; };
 		4FD9D96C2BCEB9BB002DA982 /* ScreenTwoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD9D96B2BCEB9BB002DA982 /* ScreenTwoView.swift */; };
 		4FD9D96E2BCEEC37002DA982 /* ScreenThreeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD9D96D2BCEEC37002DA982 /* ScreenThreeView.swift */; };
 		4FE4C77A2BD2814900ED5890 /* ScreenFourView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE4C7792BD2814900ED5890 /* ScreenFourView.swift */; };
@@ -59,6 +71,7 @@
 		4F0C4D1F2BF21EBB00B9199B /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		4F0C4D242BF3EE7A00B9199B /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		4F0C4D352BF4E40100B9199B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		4F2D79CA2C0C970500CD68D3 /* PartyBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartyBlock.swift; sourceTree = "<group>"; };
 		4F38FE912BC93DB7004923F3 /* CircularSpUIv3T-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CircularSpUIv3T-Bold.ttf"; sourceTree = "<group>"; };
 		4F38FE922BC93DB7004923F3 /* CircularStd-Book.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CircularStd-Book.otf"; sourceTree = "<group>"; };
 		4F38FE932BC93DB7004923F3 /* CircularStd-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CircularStd-Medium.otf"; sourceTree = "<group>"; };
@@ -66,6 +79,13 @@
 		4F38FE952BC93DB7004923F3 /* CircularStd-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CircularStd-Black.otf"; sourceTree = "<group>"; };
 		4F38FE9B2BC93E1E004923F3 /* Movie-Quiz-Multiplayer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Movie-Quiz-Multiplayer-Info.plist"; sourceTree = SOURCE_ROOT; };
 		4F3F4F9C2BE92F6B009D1A8A /* GifImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifImageView.swift; sourceTree = "<group>"; };
+		4F5F2F142BFF2A8E005CFD33 /* ScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreView.swift; sourceTree = "<group>"; };
+		4F5F2F162BFFEC0F005CFD33 /* PopcornView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopcornView.swift; sourceTree = "<group>"; };
+		4F5F2F1B2C03C8D6005CFD33 /* LeaderBoardTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderBoardTimer.swift; sourceTree = "<group>"; };
+		4F61E7E32C07B5AD009AEA7A /* LoaderFullScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoaderFullScreen.swift; sourceTree = "<group>"; };
+		4F6D90392C090F2200ECBA42 /* LobbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LobbyView.swift; sourceTree = "<group>"; };
+		4F6D903B2C0B35AD00ECBA42 /* ScreenSixMultiplayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSixMultiplayer.swift; sourceTree = "<group>"; };
+		4F6D903D2C0B3A2A00ECBA42 /* ScoreOnTopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreOnTopView.swift; sourceTree = "<group>"; };
 		4F6F9D122BBC8FA9002E523F /* Movie Quiz Multiplayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Movie Quiz Multiplayer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F6F9D152BBC8FA9002E523F /* Movie_Quiz_MultiplayerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie_Quiz_MultiplayerApp.swift; sourceTree = "<group>"; };
 		4F6F9D172BBC8FA9002E523F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -87,6 +107,7 @@
 		4FCA0ABB2BD06CB900A997BB /* Circular-Std-Book.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Circular-Std-Book.ttf"; sourceTree = "<group>"; };
 		4FCB57B32BC9634F00C1A877 /* ThreeBounceAnimation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreeBounceAnimation.swift; sourceTree = "<group>"; };
 		4FCB57B52BC9791700C1A877 /* AppleLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleLogin.swift; sourceTree = "<group>"; };
+		4FD27BD62C0F7A3A004932C4 /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		4FD9D96B2BCEB9BB002DA982 /* ScreenTwoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTwoView.swift; sourceTree = "<group>"; };
 		4FD9D96D2BCEEC37002DA982 /* ScreenThreeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenThreeView.swift; sourceTree = "<group>"; };
 		4FE4C7792BD2814900ED5890 /* ScreenFourView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenFourView.swift; sourceTree = "<group>"; };
@@ -106,9 +127,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F5F2F1A2BFFF988005CFD33 /* SwiftfulLoadingIndicators in Frameworks */,
+				4FD27BDA2C0F7A8B004932C4 /* SocketIO in Frameworks */,
 				4F0C4D232BF298D100B9199B /* SystemNotification in Frameworks */,
 				4F0C4D2F2BF4E1C200B9199B /* FirebaseAuth in Frameworks */,
 				4FEB05DA2BF8D33000FEBEE2 /* SwiftfulFirebaseAuth in Frameworks */,
+				4F5F2F132BFE6763005CFD33 /* Pow in Frameworks */,
 				4F0C4D322BF4E22E00B9199B /* GoogleSignIn in Frameworks */,
 				4F0C4D342BF4E22E00B9199B /* GoogleSignInSwift in Frameworks */,
 			);
@@ -159,11 +183,16 @@
 				4F6F9D172BBC8FA9002E523F /* ContentView.swift */,
 				4FE4C7822BD9264E00ED5890 /* ScreenOneView.swift */,
 				4FEAB87A2BEC14D100E40868 /* LeaderboardView.swift */,
+				4F6D90392C090F2200ECBA42 /* LobbyView.swift */,
+				4F6D903B2C0B35AD00ECBA42 /* ScreenSixMultiplayer.swift */,
 				4FD9D96B2BCEB9BB002DA982 /* ScreenTwoView.swift */,
+				4F61E7E32C07B5AD009AEA7A /* LoaderFullScreen.swift */,
+				4F6D903D2C0B3A2A00ECBA42 /* ScoreOnTopView.swift */,
 				4FD9D96D2BCEEC37002DA982 /* ScreenThreeView.swift */,
 				4F0C4D352BF4E40100B9199B /* GoogleService-Info.plist */,
 				4FE4C7792BD2814900ED5890 /* ScreenFourView.swift */,
 				4F0C4D242BF3EE7A00B9199B /* ProfileView.swift */,
+				4F2D79CA2C0C970500CD68D3 /* PartyBlock.swift */,
 				4FE4C77B2BD6BBC800ED5890 /* ScreenFiveView.swift */,
 				4FE4C77D2BD6D76A00ED5890 /* ScreenSix.swift */,
 				4FE4C77F2BD8F6CF00ED5890 /* Utils */,
@@ -194,6 +223,10 @@
 				4FEAB87E2BEEB41B00E40868 /* Shake.swift */,
 				4F0C4D1F2BF21EBB00B9199B /* Timer.swift */,
 				4FA6E96D2BF8FF8D0001BD77 /* Menu.swift */,
+				4F5F2F142BFF2A8E005CFD33 /* ScoreView.swift */,
+				4F5F2F162BFFEC0F005CFD33 /* PopcornView.swift */,
+				4F5F2F1B2C03C8D6005CFD33 /* LeaderBoardTimer.swift */,
+				4FD27BD62C0F7A3A004932C4 /* Socket.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -220,6 +253,9 @@
 				4F0C4D312BF4E22E00B9199B /* GoogleSignIn */,
 				4F0C4D332BF4E22E00B9199B /* GoogleSignInSwift */,
 				4FEB05D92BF8D33000FEBEE2 /* SwiftfulFirebaseAuth */,
+				4F5F2F122BFE6763005CFD33 /* Pow */,
+				4F5F2F192BFFF988005CFD33 /* SwiftfulLoadingIndicators */,
+				4FD27BD92C0F7A8B004932C4 /* SocketIO */,
 			);
 			productName = "Movie Quiz Multiplayer";
 			productReference = 4F6F9D122BBC8FA9002E523F /* Movie Quiz Multiplayer.app */;
@@ -254,6 +290,9 @@
 				4F0C4D2D2BF4E1C200B9199B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				4F0C4D302BF4E22E00B9199B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				4FEB05D82BF8D33000FEBEE2 /* XCRemoteSwiftPackageReference "SwiftfulFirebaseAuth" */,
+				4F5F2F112BFE6763005CFD33 /* XCRemoteSwiftPackageReference "Pow" */,
+				4F5F2F182BFFF988005CFD33 /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */,
+				4FD27BD82C0F7A8B004932C4 /* XCRemoteSwiftPackageReference "socket.io-client-swift" */,
 			);
 			productRefGroup = 4F6F9D132BBC8FA9002E523F /* Products */;
 			projectDirPath = "";
@@ -298,6 +337,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F5F2F152BFF2A8E005CFD33 /* ScoreView.swift in Sources */,
 				4F6F9D182BBC8FA9002E523F /* ContentView.swift in Sources */,
 				4F3F4F9D2BE92F6C009D1A8A /* GifImageView.swift in Sources */,
 				4FD9D96E2BCEEC37002DA982 /* ScreenThreeView.swift in Sources */,
@@ -306,6 +346,8 @@
 				4FE4C7852BD926B200ED5890 /* CommonUtil.swift in Sources */,
 				4F6F9D162BBC8FA9002E523F /* Movie_Quiz_MultiplayerApp.swift in Sources */,
 				4FE4C77A2BD2814900ED5890 /* ScreenFourView.swift in Sources */,
+				4FD27BD72C0F7A3A004932C4 /* Socket.swift in Sources */,
+				4F6D903E2C0B3A2B00ECBA42 /* ScoreOnTopView.swift in Sources */,
 				4FE4C77C2BD6BBC800ED5890 /* ScreenFiveView.swift in Sources */,
 				4FE4C7832BD9264E00ED5890 /* ScreenOneView.swift in Sources */,
 				4FE4C7812BD8F6F100ED5890 /* NavigationStore.swift in Sources */,
@@ -313,11 +355,17 @@
 				4FEAB87D2BEC19A600E40868 /* LeaderBoardButton.swift in Sources */,
 				4FE4C77E2BD6D76A00ED5890 /* ScreenSix.swift in Sources */,
 				4FCB57B62BC9791700C1A877 /* AppleLogin.swift in Sources */,
+				4F5F2F172BFFEC0F005CFD33 /* PopcornView.swift in Sources */,
+				4F5F2F1C2C03C8D7005CFD33 /* LeaderBoardTimer.swift in Sources */,
 				4FE4C7872BD9304C00ED5890 /* AppState.swift in Sources */,
+				4F2D79CB2C0C970500CD68D3 /* PartyBlock.swift in Sources */,
 				4FA6E96E2BF8FF8D0001BD77 /* Menu.swift in Sources */,
+				4F6D903A2C090F2200ECBA42 /* LobbyView.swift in Sources */,
 				4FEAB87F2BEEB41B00E40868 /* Shake.swift in Sources */,
 				4FD9D96C2BCEB9BB002DA982 /* ScreenTwoView.swift in Sources */,
 				4F7EA6122BE6CC1400AA54A0 /* CompleteLevelView.swift in Sources */,
+				4F61E7E42C07B5AD009AEA7A /* LoaderFullScreen.swift in Sources */,
+				4F6D903C2C0B35AD00ECBA42 /* ScreenSixMultiplayer.swift in Sources */,
 				4F0C4D252BF3EE7A00B9199B /* ProfileView.swift in Sources */,
 				4FCB57B42BC9634F00C1A877 /* ThreeBounceAnimation.swift in Sources */,
 			);
@@ -557,6 +605,30 @@
 				version = 7.1.0;
 			};
 		};
+		4F5F2F112BFE6763005CFD33 /* XCRemoteSwiftPackageReference "Pow" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/EmergeTools/Pow";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.4;
+			};
+		};
+		4F5F2F182BFFF988005CFD33 /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulLoadingIndicators.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.4;
+			};
+		};
+		4FD27BD82C0F7A8B004932C4 /* XCRemoteSwiftPackageReference "socket.io-client-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/socketio/socket.io-client-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		4FEB05D82BF8D33000FEBEE2 /* XCRemoteSwiftPackageReference "SwiftfulFirebaseAuth" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulFirebaseAuth.git";
@@ -587,6 +659,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4F0C4D302BF4E22E00B9199B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		4F5F2F122BFE6763005CFD33 /* Pow */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4F5F2F112BFE6763005CFD33 /* XCRemoteSwiftPackageReference "Pow" */;
+			productName = Pow;
+		};
+		4F5F2F192BFFF988005CFD33 /* SwiftfulLoadingIndicators */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4F5F2F182BFFF988005CFD33 /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */;
+			productName = SwiftfulLoadingIndicators;
+		};
+		4FD27BD92C0F7A8B004932C4 /* SocketIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FD27BD82C0F7A8B004932C4 /* XCRemoteSwiftPackageReference "socket.io-client-swift" */;
+			productName = SocketIO;
 		};
 		4FEB05D92BF8D33000FEBEE2 /* SwiftfulFirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -1,30 +1,36 @@
 import SwiftUI
 
 struct ScreenThree: View {
+    @EnvironmentObject private var socketHandler: SocketHandler
     @EnvironmentObject private var navigationStore: NavigationStore
     @State private var isTapped1 = false
     @State private var isLeaderTapped = false
     @State private var categories: [Category] = DataManager.shared.getCategories()
     @EnvironmentObject var AppState: Game
-
+    init(){
+        print("INIT SCREEN 3")
+    }
     var body: some View {
         VStack(spacing: 0) {
             Menu()
-            categoryTitle
+            PartyBox()
+                .padding(.top, 30)
+                .padding(.leading, 18)
+                .padding(.trailing, 20)
             favoriteGenresCard
             categoryCardsScrollView
             Spacer()
             LeaderboardButton()
-                .padding(.bottom, 10)
-                .scaleEffect(isLeaderTapped ? 1.04 : 1)
+                .padding(.bottom, -15)
+                .scaleEffect(isLeaderTapped ? 1.5 : 1)
                 .animation(.spring(response: 0.4, dampingFraction: 0.6))
                 .onTapGesture {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         isLeaderTapped.toggle()
                     }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                         isLeaderTapped.toggle()
-                        navigationStore.push(to: .leaderBoardPage)
+                        navigationStore.push(to: .lobbyView)
                     }
                 }
         }
@@ -42,6 +48,7 @@ struct ScreenThree: View {
         }
         .padding(.leading, 20)
         .padding(.bottom, 20)
+        .padding(.top, -5)
         .tracking(-1.85)
         .foregroundColor(.white)
         .font(Font.custom("CircularSpUIv3T-Bold", size: 50))
@@ -111,6 +118,7 @@ struct ScreenThree: View {
             .scaleEffect(isTapped1 ? 1.2 : 1)
             .animation(.spring(response: 0.4, dampingFraction: 0.6))
             .onTapGesture {
+                socketHandler.updatePartyData(name: bannerCategory.name , id: "category", value: bannerCategory.id, sessionId: AppState.partySession)
                 withAnimation(.easeInOut(duration: 0.3)) {
                     isTapped1.toggle()
                 }
@@ -120,6 +128,7 @@ struct ScreenThree: View {
                 }
             }
             .padding(.bottom, 16)
+            .padding(.top, 20)
         } else {
             EmptyView()
         }
@@ -146,6 +155,9 @@ struct ScreenThree: View {
 
 struct CategoryCard: View {
     @EnvironmentObject private var navigationStore: NavigationStore
+    @EnvironmentObject private var socketHandler: SocketHandler
+    @EnvironmentObject var AppState: Game
+
     let title: String
     let description: String
     let imageName: String
@@ -198,6 +210,8 @@ struct CategoryCard: View {
         .scaleEffect(isTapped ? 1.2 : 1)
         .animation(.spring(response: 0.4, dampingFraction: 0.6))
         .onTapGesture {
+            socketHandler.updatePartyData(name: title , id: "category", value: categoryId, sessionId: AppState.partySession)
+            
             withAnimation(.easeInOut(duration: 0.3)) {
                 isTapped.toggle()
             }

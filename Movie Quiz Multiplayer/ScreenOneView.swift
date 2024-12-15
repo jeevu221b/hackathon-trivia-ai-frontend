@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftfulFirebaseAuth
 import Firebase
 
+
 struct ScreenOne: View {
     var isPreview: Bool {
         return ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
@@ -104,6 +105,9 @@ struct ScreenOne: View {
                 appleLogin = true
                 if isPreview {
                     AppState.generateMockUser()
+                    if let email = AppState.user?.email {
+                        await loginUser(email: email)
+                    }
                     navigationStore.push(to: .screen2)
                     return
                 }
@@ -124,6 +128,11 @@ struct ScreenOne: View {
                     let encoder = JSONEncoder()
                     if let encodedUser = try? encoder.encode(AppState.user) {
                         UserDefaults.standard.set(encodedUser, forKey: "loggedInUser")
+                    }
+                    
+                    // Call the loginUser function with the user's email
+                    if let email = user.email {
+                        await loginUser(email: email)
                     }
                     
                     AppState.isLoggedIn = true

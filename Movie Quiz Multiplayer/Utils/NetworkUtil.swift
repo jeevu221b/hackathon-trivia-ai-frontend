@@ -62,16 +62,18 @@ let getAllDataAPIInfo: APIInfo = APIInfo(
     endpointURL: URL(string: "\(baseUrl)/api/data")!
 )
 
-func getAllData(userId: String) async throws -> Data {
+func getAllData() async throws -> Data {
     let url = getAllDataAPIInfo.endpointURL
     
     var request = URLRequest(url: url)
     request.httpMethod = "POST"
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     
-    let requestBody = ["userId": userId]
-    request.httpBody = try JSONSerialization.data(withJSONObject: requestBody, options: [])
-    print("here")
+    // Add the token to the Authorization header
+    if let user = DataManager.shared.getUser() {
+        request.setValue("\(user.token ?? "")", forHTTPHeaderField: "Authorization")
+    }
+    
     let (data, response) = try await URLSession.shared.data(for: request)
     print(data)
     guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
@@ -81,23 +83,22 @@ func getAllData(userId: String) async throws -> Data {
     return data
 }
 
-
 class DataManager {
     static let shared = DataManager()
     
-    private let userDefaults = UserDefaults.standard
+    public let userDefaults = UserDefaults.standard
     
     private init() {}
     
     
-    func fetchData(userId: String) async throws {
-        let data = try await getAllData(userId: userId)
+    func fetchData() async throws {
+        let data = try await getAllData()
         
         // Decode the received data
         let apiResponse = try JSONDecoder().decode(APIResponse.self, from: data)
         
         // Store the decoded data in UserDefaults
-        print(apiResponse.categories)
+//        print(apiResponse.categories)
         saveCategories(apiResponse.categories)
         saveSubcategories(apiResponse.subcategories)
         saveLevels(apiResponse.levels)
@@ -166,6 +167,12 @@ func getQuestions(levelId: String) async throws -> [Question] {
     var request = URLRequest(url: url)
     request.httpMethod = "POST"
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    
+    // Add the token to the Authorization header
+    if let user = DataManager.shared.getUser() {
+        request.setValue("\(user.token ?? "")", forHTTPHeaderField: "Authorization")
+    }
+    
     let requestBody = ["levelId": levelId]
     request.httpBody = try JSONSerialization.data(withJSONObject: requestBody, options: [])
     
@@ -179,15 +186,20 @@ func getQuestions(levelId: String) async throws -> [Question] {
     return questions
 }
 
-func createSession(levelId: String) async -> String? {
+func createSession(levelId: String, multiplayer: Bool) async -> String? {
     let url = URL(string: "\(baseUrl)/api/create/session")!
     var request = URLRequest(url: url)
     request.httpMethod = "POST"
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     
-    let body: [String: String] = [
+    // Add the token to the Authorization header
+    if let user = DataManager.shared.getUser() {
+        request.setValue("\(user.token ?? "")", forHTTPHeaderField: "Authorization")
+    }
+    
+    let body: [String: Any] = [
         "levelId": levelId,
-        "userId": "6613d6eb899ff3bd6ca46608"
+        "multiplayer": multiplayer
     ]
     request.httpBody = try? JSONSerialization.data(withJSONObject: body)
     
@@ -224,35 +236,31 @@ func updateLevels(with levelsToUpdate: [Level]) {
 }
 
 
-class AuthenticationURLProtocol: URLProtocol {
-    override class func canInit(with request: URLRequest) -> Bool {
-        return true
-    }
+func loginUser(email: String) async {
+    let url = URL(string: "\(baseUrl)/api/login")!
+    var request = URLRequest(url: url)
+    request.httpMethod = "POST"
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     
-    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
-        return request
-    }
+    let body: [String: String] = ["email": email]
+    request.httpBody = try? JSONSerialization.data(withJSONObject: body)
     
-    override func startLoading() {
-        var newRequest = request
-        newRequest.setValue("Bearer your_auth_token", forHTTPHeaderField: "Authorization")
-        
-        let task = URLSession.shared.dataTask(with: newRequest) { (data, response, error) in
-            if let data = data {
-                self.client?.urlProtocol(self, didLoad: data)
+    do {
+        let (data, _) = try await URLSession.shared.data(for: request)
+        if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+           let token = json["token"] as? String {
+            // Update the user object with the token
+            if var user = DataManager.shared.getUser() {
+                user.token = token
+                DataManager.shared.saveUser(user)
+                print("Token saved successfully")
+            } else {
+                print("User not found")
             }
-            if let response = response {
-                self.client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-            }
-            if let error = error {
-                self.client?.urlProtocol(self, didFailWithError: error)
-            }
-            self.client?.urlProtocolDidFinishLoading(self)
+        } else {
+            print("Failed to parse login response")
         }
-        task.resume()
-    }
-    
-    override func stopLoading() {
-        // No-op
+    } catch {
+        print("Error logging in: \(error)")
     }
 }
