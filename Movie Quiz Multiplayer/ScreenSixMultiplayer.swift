@@ -65,7 +65,7 @@ struct ScreenSixMultiplayer: View {
     
     private func fetchQuestions() async {
         do {
-            let fetchedQuestions = try await getQuestions(levelId: levelId)
+            let fetchedQuestions = try await getQuestions(levelId: levelId, multiplayer: true)
             questions = fetchedQuestions
             socketHandler.isReadyNow(sessionId: "sessionId")
             socketHandler.socket.on("allReady") { data, ack in
@@ -134,15 +134,12 @@ struct QuizView_: View {
                         timer.upstream.connect().cancel()
                         isActive = false
                     }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
                         counter = 0
-                    }
+                    
                 }
             }
             .onChange(of: currentQuestionIndex) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     counter = 0
-                }
                     }
         }
     }
@@ -292,7 +289,7 @@ struct QuizView_: View {
                    let index = dataDict["index"] {
                     DispatchQueue.main.async {
                         print(index)
-                        nextQuestion(index: index ?? 0)
+                        nextQuestion(index: index)
                     }
                 }
             }
@@ -324,6 +321,9 @@ struct QuizView_: View {
     }
     
     func updateScore(isCorrect: Bool) {
+        
+        socketHandler.onAnswer(sessionId: "sessionId", index: currentQuestionIndex, answer: isCorrect)
+        
         if isCorrect {
                 score += 10
         }

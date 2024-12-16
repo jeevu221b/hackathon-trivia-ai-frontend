@@ -161,7 +161,7 @@ let getQuestionsAPIInfo: GetQuestionsAPIInfo = GetQuestionsAPIInfo(
     endpointURL: URL(string: "\(baseUrl)/api/get/question")!
 )
 
-func getQuestions(levelId: String) async throws -> [Question] {
+func getQuestions(levelId: String, multiplayer: Bool) async throws -> [Question] {
     print("get questions")
     let url = getQuestionsAPIInfo.endpointURL
     var request = URLRequest(url: url)
@@ -173,7 +173,10 @@ func getQuestions(levelId: String) async throws -> [Question] {
         request.setValue("\(user.token ?? "")", forHTTPHeaderField: "Authorization")
     }
     
-    let requestBody = ["levelId": levelId]
+    let requestBody: [String: Any] = [
+        "levelId": levelId,
+        "multiplayer": multiplayer
+    ]
     request.httpBody = try JSONSerialization.data(withJSONObject: requestBody, options: [])
     
     let (data, response) = try await URLSession.shared.data(for: request)
@@ -236,22 +239,26 @@ func updateLevels(with levelsToUpdate: [Level]) {
 }
 
 
-func loginUser(email: String) async {
+func loginUser(email: String, name: String) async {
     let url = URL(string: "\(baseUrl)/api/login")!
     var request = URLRequest(url: url)
     request.httpMethod = "POST"
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     
-    let body: [String: String] = ["email": email]
+    let body: [String: String] = ["email": email, "name": name]
     request.httpBody = try? JSONSerialization.data(withJSONObject: body)
     
     do {
         let (data, _) = try await URLSession.shared.data(for: request)
         if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-           let token = json["token"] as? String {
+           let token = json["token"] as? String,
+           let username = json["username"] as? String,
+           let userId = json["id"] as? String {
             // Update the user object with the token
             if var user = DataManager.shared.getUser() {
-                user.token = token
+                user.token = token;
+                user.username = username;
+                user.id = userId;
                 DataManager.shared.saveUser(user)
                 print("Token saved successfully")
             } else {

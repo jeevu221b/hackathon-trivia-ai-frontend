@@ -1,12 +1,18 @@
 import SwiftUI
-struct Players: Encodable, Decodable, Identifiable {
+
+enum AnswerState: String, Codable {
+    case correctlyAnswered = "correctlyAnswered"
+    case incorrectlyAnswered = "incorrectlyAnswered"
+    case notAnswered = "notAnswered"
+}
+
+struct Players: Codable, Identifiable {
     let id: String
     let username: String
     let score: Int
-    let lastRound: Int
-    let rank: Int
     let isOnline: Bool
     let userId: String
+    let answerState: AnswerState
 }
 
 struct PlayerScoresView: View {
@@ -20,7 +26,7 @@ struct PlayerScoresView: View {
                 PlayerScoreView(
                     playerName: player.username,
                     score: player.score,
-                    answerState: player.lastRound > 0 ? .correctlyAnswered : .notAnswered,
+                    answerState: player.answerState,
                     isDisconnected: !player.isOnline
                 )
             }
@@ -29,25 +35,19 @@ struct PlayerScoresView: View {
             let data: [String: String] = [
                 "sessionId": "sessionId",
             ]
-            socketHandler.socket.emit("getRoomUsers", data)
+            socketHandler.socket.emit("getRoomUsersScore", data)
             
             socketHandler.socket.on("roomUsersScore") { [self] data, _ in
+                print("roomUsersScore")
+                print(data)
                 if let playerArray = data[0] as? [[String: Any]] {
-                    var newPlayers: [Players] = []
-                    for playerData in playerArray {
-                        let player = Players(
-                            id: playerData["id"] as? String ?? "",
-                            username: playerData["username"] as? String ?? "",
-                            score: playerData["score"] as? Int ?? 0,
-                            lastRound: playerData["lastRound"] as? Int ?? 0,
-                            rank: playerData["rank"] as? Int ?? 0,
-                            isOnline: playerData["isOnline"] as? Int == 1,
-                            userId: playerData["userId"] as? String ?? ""
-                        )
-                        newPlayers.append(player)
-                    }
-                    DispatchQueue.main.async {
-                        self.players = newPlayers
+                    let decoder = JSONDecoder()
+                    let jsonData = try? JSONSerialization.data(withJSONObject: playerArray, options: [])
+                    if let jsonData = jsonData {
+                        let newPlayers = try? decoder.decode([Players].self, from: jsonData)
+                        DispatchQueue.main.async {
+                            self.players = newPlayers ?? []
+                        }
                     }
                 }
             }
@@ -67,14 +67,14 @@ struct PlayerScoreView: View {
                 Text(playerName)
                     .tracking(-0.4)
                     .foregroundColor(.white.opacity(0.6))
-                    .font(Font.custom("CircularSpUIv3T-Book", size: 9))
+                    .font(Font.custom("CircularSpUIv3T-Book", size: 12))
                     .frame(width: 75, height: 42, alignment: .center)
                     .background(Color(answerStateColor(for: answerState)))
                 
                 Text("\(score)")
                     .tracking(-0.4)
                     .foregroundColor(.white.opacity(0.8))
-                    .font(Font.custom("CircularSpUIv3T-Bold", size: 10))
+                    .font(Font.custom("CircularSpUIv3T-Bold", size: 11))
                     .frame(width: 37, height: 42, alignment: .center)
                     .padding(.leading, -8)
             }
@@ -111,12 +111,6 @@ struct PlayerScoreView: View {
             return Color(hex: "155C4E")
         }
     }
-}
-
-enum AnswerState {
-    case correctlyAnswered
-    case incorrectlyAnswered
-    case notAnswered
 }
 
 extension Color {

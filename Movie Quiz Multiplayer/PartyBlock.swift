@@ -68,12 +68,12 @@ struct CreatePartyView: View {
                                     .scaledToFit()
                                     .frame(width: 20, height: 20)
                                 Text("Start a party")
-                                    .font(.custom("CircularSpUIv3T-Bold", size: 8))
+                                    .font(.custom("CircularSpUIv3T-Bold", size: 12))
                                     .foregroundColor(Color.black)
                                     .padding(.leading, -3)
                             }
                         }
-                        .padding(2)
+                        .padding(7)
                         .padding(.leading, 10)
                         .padding(.trailing, 10)
                         .background(Color.white)
@@ -98,11 +98,11 @@ struct CreatePartyView: View {
                             }
                            
                         }
-                        .padding(.top, -5)
+                        .padding(.top, 3)
                         
                         // Ensure the button does not break
                     }
-                    .padding(.trailing, 0)
+                    .padding(.trailing, 1)
                     
                 }.frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
             }.padding(15)
@@ -191,11 +191,11 @@ struct PartyCreatedView: View {
                                 .scaledToFit()
                                 .frame(width: 15, height: 15)
                             Text("Invite your friends")
-                                .font(.custom("CircularSpUIv3T-Bold", size: 8))
+                                .font(.custom("CircularSpUIv3T-Bold", size: 12))
                                 .foregroundColor(Color.black)
                                 .padding(.leading, -3)
                         }
-                        .padding(5)
+                        .padding(10)
                         .padding(.leading, 10)
                         .padding(.trailing, 10)
                         .background(Color.white)
@@ -218,7 +218,7 @@ struct PartyCreatedView: View {
                         
                         // Ensure the button does not break
                     }
-                    .padding(.trailing, 0)
+                    .padding(.trailing, 1)
                     
                 }.frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
             }.padding(15)

@@ -1,10 +1,11 @@
 import SwiftUI
 
 struct User: Identifiable, Encodable, Decodable {
-    let id: String?
+    var id: String?
     let email: String?
     let isAnonymous: Bool?
     let displayName: String
+    var username: String
     let firstName: String?
     let lastName: String?
     let phoneNumber: String?
@@ -62,12 +63,13 @@ class Game: ObservableObject {
                 email: "santosh@transak.com",
                 isAnonymous: false,
                 displayName: "Santosh Pant",
-                firstName: "jeevu221b",
+                username: "blueUser007",
+                firstName: "blue",
                 lastName: nil,
                 phoneNumber: nil,
                 photoURL: URL(string: "https://lh3.googleusercontent.com/a/ACg8ocJxG6EmZgSX5ZfwLnLXLOp4vLYf--DvzierxRghgt_ZMdYghxk=s96-c"),
-                creationDate: ISO8601DateFormatter().date(from: "2024-12-10T15:25:12+0000"),
-                lastSignInDate: ISO8601DateFormatter().date(from: "2024-12-11T17:25:54+0000")
+                creationDate: ISO8601DateFormatter().date(from: "2024-12-11T15:25:12+0000"),
+                lastSignInDate: ISO8601DateFormatter().date(from: "2024-12-12T17:25:54+0000")
             )
             
             let encoder = JSONEncoder()

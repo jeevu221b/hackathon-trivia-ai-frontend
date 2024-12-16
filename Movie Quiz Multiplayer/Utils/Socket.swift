@@ -12,7 +12,7 @@ class SocketHandler: ObservableObject {
             print(token)
         }
         
-        let socketURL = URL(string: "ws://0.tcp.in.ngrok.io:17101")!
+        let socketURL = URL(string: "ws://0.tcp.in.ngrok.io:15775")!
         let config: SocketIOClientConfiguration = [
             .log(true),
             .compress,
@@ -68,6 +68,15 @@ class SocketHandler: ObservableObject {
             "sessionId": "sessionId"
         ]
         socket.emit("isReadyNow", data)
+    }
+    
+    func onAnswer(sessionId: String, index: Int, answer: Bool) {
+        let data: [String: Any] = [
+            "sessionId": "sessionId",
+            "index": index,
+            "answer": answer
+        ]
+        socket.emit("onAnswer", data)
     }
     
     

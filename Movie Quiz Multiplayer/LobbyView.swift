@@ -20,9 +20,12 @@ struct PartyView: View {
     @EnvironmentObject private var navigationStore : NavigationStore
     @EnvironmentObject var AppState: Game
 
-
-
-
+    var hostUsername: String {
+        if let host = roomUsers.users.first(where: { $0.isHost }) {
+            return host.username
+        }
+        return ""
+    }
 
     
     var body: some View {
@@ -30,8 +33,8 @@ struct PartyView: View {
             // Party Header
             Menu().padding(.top, 40)
             HStack {
-                Text("@killua's party")
-                    .font(Font.custom("CircularSpUIv3T-Bold", size: 35))
+                Text("\(hostUsername)'s party")
+                    .font(Font.custom("CircularSpUIv3T-Bold", size: 30))
                     .tracking(-0.7)
                     .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
             }
@@ -178,7 +181,7 @@ struct PartyView: View {
             var photoURL = ""
             var name = ""
             if let user = DataManager.shared.getUser() {
-                name = user.firstName ?? "santo"
+                name = user.username ?? "santo"
                 if let url = user.photoURL {
                     photoURL = url.absoluteString
                 }
@@ -205,7 +208,8 @@ struct PartyView: View {
                                     lastRound: userDict["lastRound"] as? Int ?? 0,
                                     imageName: userDict["imageName"] as? String ?? "",
                                     isOnline: userDict["isOnline"] as? Bool ?? false,
-                                    id: userDict["userId"] as? String ?? ""
+                                    id: userDict["userId"] as? String ?? "",
+                                    isHost: userDict["isHost"] as? Bool ?? false
                                 )
                                 print("player")
                                 print(player)
@@ -282,6 +286,7 @@ struct Player {
     let imageName: String
     let isOnline: Bool
     let id: String
+    let isHost: Bool
 }
 
 struct GridView: View {
@@ -367,7 +372,7 @@ struct PlayerView: View {
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 33, height: 33)
-                                    .padding(.bottom, -10)
+                                    .padding(.bottom, -15)
                                     .padding(.leading, 15)
                                     .rotationEffect(.degrees(12), anchor: .center)
                                     .zIndex(2)
@@ -376,7 +381,7 @@ struct PlayerView: View {
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 33, height: 33)
-                                    .padding(.bottom, -10)
+                                    .padding(.bottom, -15)
                                     .padding(.leading, 15)
                                     .zIndex(2)
                             }

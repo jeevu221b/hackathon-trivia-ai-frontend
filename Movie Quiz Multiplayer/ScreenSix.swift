@@ -64,7 +64,7 @@ struct ScreenSix: View {
     
     private func fetchQuestions() async {
         do {
-            let fetchedQuestions = try await getQuestions(levelId: levelId)
+            let fetchedQuestions = try await getQuestions(levelId: levelId, multiplayer: false)
             questions = fetchedQuestions
             isLoading = false
         } catch {

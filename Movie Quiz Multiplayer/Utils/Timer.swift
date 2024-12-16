@@ -21,7 +21,7 @@ struct Clock: View {
             }
         }
         .onChange(of: counter) { newValue in
-            if newValue % 10 == 0 || newValue % 7 == 0 {
+            if newValue % 15 == 0 {
                 withAnimation {
                     scaleEffect = 1.6
                 }
