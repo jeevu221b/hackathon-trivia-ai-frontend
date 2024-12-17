@@ -38,10 +38,13 @@ struct ContentView: View {
             }
     }
 }
+
 struct SwipeGesture: ViewModifier {
     @ObservedObject var navigationStore: NavigationStore
     @ObservedObject var AppState: Game
     @State private var showBackAlert = false
+    @StateObject private var socketHandler = SocketHandler()
+
     func body(content: Content) -> some View {
         content
             .simultaneousGesture(
@@ -53,7 +56,7 @@ struct SwipeGesture: ViewModifier {
                                     if AppState.isPlaying {
                                         showBackAlert = true
                                         return
-                                    } else{
+                                    } else {
                                         print("going back")
                                         navigationStore.popAllScreen6()
                                         navigationStore.pop()
@@ -61,12 +64,17 @@ struct SwipeGesture: ViewModifier {
                                         return
                                     }
                                 } else if case .lobbyView = lastView {
-                                    if !AppState.partySession.isEmpty {
+                                    //if not admin don't allow to go back
+                                    print(AppState.isHost)
+                                    if AppState.isHost {
                                         navigationStore.pop()
                                         return
                                     }
                                     return
-                                        
+                                } else if case .screen7 = lastView {
+                                    //leave party
+                                    showBackAlert = true
+                                    return
                                 }
                             }
                             navigationStore.pop()
@@ -74,28 +82,48 @@ struct SwipeGesture: ViewModifier {
                         }
                     }
             )
-            .alert(isPresented: $showBackAlert) {
-                Alert(
-                    title: Text("Warning"),
-                    message: Text("You will lose your progress"),
-                    primaryButton: .default(Text("Stay"), action: {
-                        showBackAlert = false
-                    }),
-                    secondaryButton: .destructive(Text("Go Back"), action: {
-                        AppState.isPlaying = false
-                        navigationStore.popAllScreen6()
-                        navigationStore.pop()
-                        navigationStore.push(to: .screen5(AppState.currentSubCategory))
-                    })
-                )
-            }
+            .backAlert(
+                showBackAlert: $showBackAlert,
+                onStay: {
+                    showBackAlert = false
+                },
+                onGoBack: {
+                    if let lastView = navigationStore.path.last {
+                        if case .screen7 = lastView {
+                            //Leave the party and navigate to home
+                            socketHandler.leaveRoom(sessionId: AppState.partySession)
+                            AppState.inParty = false
+                            AppState.partySession = ""
+                            navigationStore.popToRoot()
+                            navigationStore.push(to: .screen3)
+                        } else {
+                            // Default onGoBack logic for other screens
+                            AppState.isPlaying = false
+                            navigationStore.popAllScreen6()
+                            navigationStore.pop()
+                            navigationStore.push(to: .screen5(AppState.currentSubCategory))
+                        }
+                    }
+                },
+                lastView: {
+                    navigationStore.path.last
+                }
+            )
     }
 }
+
 extension View {
     func swipeGesture(navigationStore: NavigationStore,  AppState: Game) -> some View {
         modifier(SwipeGesture(navigationStore: navigationStore,  AppState: AppState))
     }
 }
+
+extension View {
+    func backAlert(showBackAlert: Binding<Bool>, onStay: @escaping () -> Void, onGoBack: @escaping () -> Void, lastView: @escaping () -> NavigationDestination?) -> some View {
+        modifier(BackAlertModifier(showBackAlert: showBackAlert, onStay: onStay, onGoBack: onGoBack, lastView: lastView))
+    }
+}
+
 #Preview {
     ContentView()
         .statusBar(hidden: true)

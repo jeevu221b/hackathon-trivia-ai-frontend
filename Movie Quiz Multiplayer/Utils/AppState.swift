@@ -44,8 +44,21 @@ class Game: ObservableObject {
     @Published var isLoggedIn = false
     @Published var inParty = false
     @Published var partySession = ""
+    @Published var isHost = false
     @Published var user: User?
     @Published var party: Party?
+    @Published var isMultiplayer: Bool {
+        didSet {
+            UserDefaults.standard.set(isMultiplayer, forKey: "isMultiplayer")
+            Task{
+                try await DataManager.shared.fetchData(isMultiplayer: isMultiplayer)
+            }
+        }
+    }
+    
+    init() {
+        self.isMultiplayer = UserDefaults.standard.bool(forKey: "isMultiplayer")
+    }
     
     func checkLoggedInUser() {
         if let userData = UserDefaults.standard.data(forKey: "loggedInUser") {
@@ -68,8 +81,8 @@ class Game: ObservableObject {
                 lastName: nil,
                 phoneNumber: nil,
                 photoURL: URL(string: "https://lh3.googleusercontent.com/a/ACg8ocJxG6EmZgSX5ZfwLnLXLOp4vLYf--DvzierxRghgt_ZMdYghxk=s96-c"),
-                creationDate: ISO8601DateFormatter().date(from: "2024-12-11T15:25:12+0000"),
-                lastSignInDate: ISO8601DateFormatter().date(from: "2024-12-12T17:25:54+0000")
+                creationDate: ISO8601DateFormatter().date(from: "2024-12-12T15:25:12+0000"),
+                lastSignInDate: ISO8601DateFormatter().date(from: "2024-12-13T17:25:54+0000")
             )
             
             let encoder = JSONEncoder()

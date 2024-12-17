@@ -1,8 +1,8 @@
-
 import SwiftUI
 
 struct ScreenTwo: View {
     @EnvironmentObject private var navigationStore : NavigationStore
+    @EnvironmentObject var AppState: Game
     @State private var errorMessage: String = ""
     @State private var loading: Bool = false
     @State private var loader: Bool = true
@@ -140,7 +140,7 @@ struct ScreenTwo: View {
     func fetchData() async {
         do {
             loading = true
-            try await DataManager.shared.fetchData()
+            try await DataManager.shared.fetchData(isMultiplayer: AppState.isMultiplayer)
             loading = false
             errorMessage = ""
         } catch {

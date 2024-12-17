@@ -62,7 +62,7 @@ let getAllDataAPIInfo: APIInfo = APIInfo(
     endpointURL: URL(string: "\(baseUrl)/api/data")!
 )
 
-func getAllData() async throws -> Data {
+func getAllData(isMultiplayer: Bool) async throws -> Data {
     let url = getAllDataAPIInfo.endpointURL
     
     var request = URLRequest(url: url)
@@ -73,6 +73,12 @@ func getAllData() async throws -> Data {
     if let user = DataManager.shared.getUser() {
         request.setValue("\(user.token ?? "")", forHTTPHeaderField: "Authorization")
     }
+    
+    let requestBody: [String: Any] = [
+        "multiplayer": isMultiplayer
+    ]
+    request.httpBody = try JSONSerialization.data(withJSONObject: requestBody, options: [])
+    
     
     let (data, response) = try await URLSession.shared.data(for: request)
     print(data)
@@ -91,8 +97,8 @@ class DataManager {
     private init() {}
     
     
-    func fetchData() async throws {
-        let data = try await getAllData()
+    func fetchData(isMultiplayer: Bool) async throws {
+        let data = try await getAllData(isMultiplayer: isMultiplayer)
         
         // Decode the received data
         let apiResponse = try JSONDecoder().decode(APIResponse.self, from: data)

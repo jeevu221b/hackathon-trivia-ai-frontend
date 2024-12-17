@@ -1,6 +1,12 @@
 import SwiftUI
+import SystemNotification
+import UIKit
 
-
+func isValidObjectId(_ objectId: String) -> Bool {
+        let objectIdRegex = "^[0-9a-fA-F]{24}$"
+        let objectIdTest = NSPredicate(format: "SELF MATCHES %@", objectIdRegex)
+        return objectIdTest.evaluate(with: objectId)
+    }
 
 struct PartyBox: View {
     @State var isTapped = false
@@ -12,9 +18,11 @@ struct PartyBox: View {
     
     var body: some View {
         if AppState.inParty {
-            PartyCreatedView()
+            PartyCreatedView().frame(height: 121)
+               
         } else{
-            CreatePartyView(changeIsTapped: changeIsTapped)
+            CreatePartyView(changeIsTapped: changeIsTapped).frame(height: 121)
+               
         }
         
     }
@@ -26,7 +34,11 @@ struct PartyBox: View {
 struct CreatePartyView: View {
     let changeIsTapped: () -> Void
     @State var isTapped = false
+    @State var isTapped2 = false
     @EnvironmentObject var AppState: Game
+    @EnvironmentObject private var navigationStore : NavigationStore
+    @State private var isActive = false
+
 
     
     var body: some View {
@@ -50,60 +62,119 @@ struct CreatePartyView: View {
                 .padding(0)
                 .padding(.leading, 5)
                 
-                VStack {
-                    Button(action: {
-                        // Start a party action
-                    }) {
-                        HStack {
-                            if isTapped {
-                                ThreeBounceAnimation(color: .black,
-                                                     width: CGFloat(20), height: CGFloat(20))
-                                .frame(width: 60, height: 20)
-                                .padding(.leading, 10)
-                                .padding(.trailing, 10)
-                            } else {
+                HStack{
+                    VStack {
+                        Button(action: {
+                            // Start a party action
+                        }) {
+                            HStack {
+                                if isTapped {
+                                    ThreeBounceAnimation(color: .black,
+                                                         width: CGFloat(20), height: CGFloat(20))
+                                    .frame(width: 60, height: 20)
+                                    .padding(.leading, 10)
+                                    .padding(.trailing, 10)
+                                } else {
+                                    
+                                    Image("party")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 20, height: 20)
+                                    Text("Start a party")
+                                        .font(.custom("CircularSpUIv3T-Bold", size: 12))
+                                        .foregroundColor(Color.black)
+                                        .padding(.leading, -3)
+                                }
+                            }
+                            .padding(7)
+                            .padding(.leading, 5)
+                            .padding(.trailing, 5)
+                            .background(Color.white)
+                            .cornerRadius(7)
+                            .fixedSize(horizontal: true, vertical: false)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 7)
+                                    .stroke(Color(uiColor: hexStringToUIColor(hex: "FFFFFF")).opacity(0.40), lineWidth: isTapped ? 15 : 4)
+                                    .rotationEffect(.degrees(0), anchor: .center)
                                 
-                                Image("party")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 20, height: 20)
-                                Text("Start a party")
-                                    .font(.custom("CircularSpUIv3T-Bold", size: 12))
-                                    .foregroundColor(Color.black)
-                                    .padding(.leading, -3)
-                            }
-                        }
-                        .padding(7)
-                        .padding(.leading, 10)
-                        .padding(.trailing, 10)
-                        .background(Color.white)
-                        .cornerRadius(7)
-                        .fixedSize(horizontal: true, vertical: false)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 7)
-                                .stroke(Color(uiColor: hexStringToUIColor(hex: "FFFFFF")).opacity(0.40), lineWidth: isTapped ? 15 : 4)
-                                .rotationEffect(.degrees(0), anchor: .center)
-                            
-                        )
-                        .onTapGesture {
-                            isTapped.toggle()
-                            var sessionId = ""
-                            Task {
-                                sessionId = await createSession(levelId: "", multiplayer: true) ?? ""
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
-                                AppState.inParty = true
-                                AppState.partySession = sessionId
+                            )
+                            .onTapGesture {
                                 isTapped.toggle()
+                                var sessionId = ""
+                                Task {
+                                    sessionId = await createSession(levelId: "", multiplayer: true) ?? ""
+                                }
+                                print("party ID")
+                                print(sessionId)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                    AppState.inParty = true
+                                    AppState.partySession = sessionId
+                                    AppState.isHost = true
+                                    isTapped.toggle()
+                                    navigationStore.push(to: .lobbyView)
+                                    
+                                }
+                                
                             }
-                           
+                            .padding(.top, 3)
+                            
+                            // Ensure the button does not break
                         }
-                        .padding(.top, 3)
+                        .padding(.trailing, 10)
                         
-                        // Ensure the button does not break
                     }
-                    .padding(.trailing, 1)
                     
+                    VStack{
+                        Button(action: {
+                            if let clipboardContent = UIPasteboard.general.string, isValidObjectId(clipboardContent) {
+                                isTapped2.toggle()
+                                print("clipboard")
+                                    isTapped2.toggle()
+                                    print(clipboardContent)
+                                    AppState.inParty = true
+                                    AppState.partySession = clipboardContent
+                                    navigationStore.push(to: .lobbyView)
+//                                }
+                            } else {
+                                isTapped2.toggle()
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                    isTapped2.toggle()
+                                    isActive.toggle()
+                                }
+                                print("No content in clipboard")
+                            }
+                        }) {
+                            HStack {
+                                    Image(systemName:"clipboard.fill")
+                                        .font(.system(size: 10))
+                                        .foregroundColor(Color(red: 175/255, green: 205/255, blue: 208/255))
+                                    Text("Paste a party code")
+                                        .tracking(-0.1)
+                                        .font(.custom("CircularSpUIv3T-Bold", size: 12))
+                                        .foregroundColor(Color.black)
+                                        .padding(.leading, -3)
+                                
+                            }
+                            .padding(9.3)
+                            .padding(.leading, 5)
+                            .padding(.trailing, 5)
+                            .background(Color.white)
+                            .cornerRadius(7)
+                            .fixedSize(horizontal: true, vertical: false)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 7)
+                                    .stroke(Color(uiColor: hexStringToUIColor(hex: "FFFFFF")).opacity(0.40), lineWidth: isTapped2 ? 15 : 4)
+                                    .rotationEffect(.degrees(0), anchor: .center)
+                                
+                            )
+//                            .onTapGesture
+                            .padding(.top, 3)
+                            
+                            // Ensure the button does not break
+                        }
+                        .padding(.trailing, 1)
+                        
+                    }
                 }.frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
             }.padding(15)
             .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
@@ -126,15 +197,58 @@ struct CreatePartyView: View {
             )
             .cornerRadius(15)
             
-        }.frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
+        }
+        .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
+            .systemNotification(isActive: $isActive) {
+                SystemNotificationContent3()
+            }
+            
+    
+    }
+}
+
+struct SystemNotificationContent2: View {
+    var body: some View {
+        HStack {
+            Image(systemName: "clipboard.fill")
+                .font(.system(size: 15))
+                .padding(.trailing, -45)
+                .padding(.leading, 17)
+            Text("Party code copied")
+                .font(.custom("CircularSpUIv3T-Bold", size: 12))
+                .padding(.leading, 5)
+                .padding(15)
+        }
     }
 }
 
 
+struct SystemNotificationContent3: View {
+    var body: some View {
+            HStack{
+                Image(systemName: "clipboard.fill")
+                    .font(.system(size: 15))
+                    .padding(.trailing, -45)
+                    .padding(.leading, 17)
+                Text("Invalid party code")
+                    .font(.custom("CircularSpUIv3T-Bold", size: 12))
+                    .padding(.leading, 5)
+                    .padding(15)
+            
+        }
+    }
+}
+
 
 struct PartyCreatedView: View {
     @State var isTapped = false
+    @State var isTapped2 = false
     @EnvironmentObject var AppState: Game
+    @StateObject private var roomUsers = RoomUsers()
+    @State private var isActive = false
+    @EnvironmentObject private var navigationStore : NavigationStore
+
+
 
     var body: some View {
         VStack{
@@ -147,50 +261,81 @@ struct PartyCreatedView: View {
                         .padding(.top, 3)
                     
                     HStack {
-                        AsyncImage(url: URL(string: "https://lh3.googleusercontent.com/a/ACg8ocIl0o9w9Fsj2TSM3qe70W1pOTD0VzB8-ZIxNzO1lqGctqE0NDM=s83-c-mo")) { image in
-                            image
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 25, height: 25)
-                                .clipShape(Circle())
-                        } placeholder: {
-                            ProgressView()
-                        }
-                        AsyncImage(url: URL(string: "https://lh3.googleusercontent.com/ogw/AF2bZyj3cgbRS02czvO6eDGD8X9h3TO043G2vW2h79vQaEaoZQ=s32-c-mo")) { image in
-                            image
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 25, height: 25)
-                                .clipShape(Circle())
-                        } placeholder: {
-                            ProgressView()
-                        }
-                        AsyncImage(url: URL(string: "https://scontent.cdninstagram.com/v/t51.2885-19/431517202_345923184456455_9054661420118065202_n.jpg?stp=dst-jpg_s100x100&_nc_cat=108&ccb=1-7&_nc_sid=3fd06f&_nc_ohc=ZhF_8lfVjdcQ7kNvgFktmxj&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.cdninstagram.com&oh=00_AYCXJeY4LMpkNzF0HZ33vHq1SnTqvTtA6uQhG-9PKbc_iQ&oe=666018DB")) { image in
-                            image
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 25, height: 25)
-                                .clipShape(Circle())
-                        } placeholder: {
-                            ProgressView()
+                        ForEach(roomUsers.users, id: \.id) { user in
+                            AsyncImage(url: URL(string: user.imageName)) { image in
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 25, height: 25)
+                                    .clipShape(Circle())
+                            } placeholder: {
+                                ProgressView()
+                                    .frame(width: 25, height: 25)
+                                    .clipShape(Circle())
+                            }
                         }
                     }
-
+                    
+                    
                 }
                 .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .leading)
                 .padding(0)
                 .padding(.leading, 5)
                 
-                VStack {
+                HStack{
+                    VStack{
+                        Button(action: {
+                               
+                            
+                        }) {
+                            HStack {
+                                Image("party")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 20, height: 20)
+                                    Text("Lobby")
+                                        .tracking(-0.1)
+                                        .font(.custom("CircularSpUIv3T-Bold", size: 12))
+                                        .foregroundColor(Color.black)
+                                        .padding(.leading, -3)
+                                
+                            }
+                            .padding(7.3)
+                            .padding(.leading, 7)
+                            .padding(.trailing, 7)
+                            .background(Color.white)
+                            .cornerRadius(7)
+                            .fixedSize(horizontal: true, vertical: false)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 7)
+                                    .stroke(Color(uiColor: hexStringToUIColor(hex: "FFFFFF")).opacity(0.40), lineWidth: isTapped ? 15 : 4)
+                                    .rotationEffect(.degrees(0), anchor: .center)
+                                
+                            )
+                            .onTapGesture{
+                                isTapped.toggle()
+                                withAnimation(.easeInOut(duration: 0.25)) {
+                                    navigationStore.push(to: .lobbyView)
+                                    isTapped.toggle()
+                                }
+                            }
+                            .padding(.top, 0)
+                            
+                        }
+                        .padding(.trailing, 10)
+                        
+                    }
+                VStack{
                     Button(action: {
                         // Start a party action
                     }) {
                         HStack {
-                            Image("whatsapp") // Replace with the actual image name if needed
+                            Image(systemName:"clipboard.fill")
                                 .resizable()
+                                .foregroundColor(Color(red: 175/255, green: 205/255, blue: 208/255))
                                 .scaledToFit()
                                 .frame(width: 15, height: 15)
-                            Text("Invite your friends")
+                            Text("Copy party code")
                                 .font(.custom("CircularSpUIv3T-Bold", size: 12))
                                 .foregroundColor(Color.black)
                                 .padding(.leading, -3)
@@ -203,24 +348,31 @@ struct PartyCreatedView: View {
                         .fixedSize(horizontal: true, vertical: false)
                         .overlay(
                             RoundedRectangle(cornerRadius: 7)
-                                .stroke(Color(uiColor: hexStringToUIColor(hex: "FFFFFF")).opacity(0.40), lineWidth: isTapped ? 15 : 4)
+                                .stroke(Color(uiColor: hexStringToUIColor(hex: "FFFFFF")).opacity(0.40), lineWidth: isTapped2 ? 15 : 4)
                                 .rotationEffect(.degrees(0), anchor: .center)
                             
                         )
                         .onTapGesture {
-                            isTapped.toggle()
+                            UIPasteboard.general.string = AppState.partySession
+                            isTapped2.toggle()
+                            
                             withAnimation(.easeInOut(duration: 0.25)) {
-                                isTapped.toggle()
+                                isActive.toggle()
+                                isTapped2.toggle()
                             }
-                           
+                            
                         }
-                        .padding(.top, -17)
+                        .padding(.top, -1)
                         
                         // Ensure the button does not break
                     }
                     .padding(.trailing, 1)
                     
-                }.frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
+                    
+                }
+                
+            }.frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
+                    
             }.padding(15)
             .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
             .background(
@@ -243,6 +395,43 @@ struct PartyCreatedView: View {
             .cornerRadius(15)
             
         }.frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
+            .onAppear {
+                NotificationCenter.default.addObserver(forName: .roomUsersUpdated, object: nil, queue: .main) { notification in
+                    if let data = notification.object as? [Any] {
+                        var newUsers: [Player] = []
+                        if let userArrays = data as? [NSArray] {
+                            for userArray in userArrays {
+                                for userDict in userArray {
+                                    if let userDict = userDict as? [String: Any], let id = userDict["userId"] as? String {
+                                        let player = Player(
+                                            username: userDict["username"] as? String ?? "",
+                                            score: userDict["score"] as? Int ?? 0,
+                                            rank: userDict["rank"] as? Int ?? 0,
+                                            lastRound: userDict["lastRound"] as? Int ?? 0,
+                                            imageName: userDict["imageName"] as? String ?? "",
+                                            isOnline: userDict["isOnline"] as? Bool ?? false,
+                                            id: userDict["userId"] as? String ?? "",
+                                            isHost: userDict["isHost"] as? Bool ?? false
+                                        )
+                                        newUsers.append(player)
+                                    }
+                                }
+                            }
+                        }
+                        DispatchQueue.main.async {
+                            print("newwwUsers")
+                            print(newUsers)
+                            roomUsers.users = newUsers
+                        }
+                    }
+                }
+            }
+            .onDisappear {
+                NotificationCenter.default.removeObserver(self, name: .roomUsersUpdated, object: nil)
+            }
+            .systemNotification(isActive: $isActive) {
+                SystemNotificationContent2()
+            }
     }
 }
 

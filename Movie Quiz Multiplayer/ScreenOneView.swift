@@ -71,6 +71,7 @@ struct ScreenOne: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 14)
+                                .padding(.trailing, 1)
                             Text("Login with Google")
                                 .font(Font.custom("CircularSpUIv3T-Bold", size: 15))
                         }
@@ -98,37 +99,37 @@ struct ScreenOne: View {
 //                        .padding(.leading, -20)
 //                }.frame(width: 285, alignment: .center)
                 
-
-                Button(action: {
-                    loginAction(apple: true)
-                }) {
-                    if !AppState.isLoggedIn && !appleLogin {
-                        HStack{
-                            Image(systemName: "apple.logo")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 14)
-                            Text("Login with Apple")
-                                .font(Font.custom("CircularSpUIv3T-Bold", size: 15))
-                        }
-                                .frame(width: 285, height: 37)
-                                .padding(15)
-                        
-                    } else {
-                        ThreeBounceAnimation(color: .white, width: CGFloat(15), height: CGFloat(15))
-                            .frame(width: 285, height: 37)
-                            .padding(15)
-                    }
-                }
-                .foregroundColor(.white)
-                .background(Color(uiColor: hexStringToUIColor(hex: "80C64A")).opacity(0.85))
-                .cornerRadius(10)
-                .buttonStyle(.plain)
-                .frame(maxWidth: .infinity,  alignment: .leading)
-                .padding(.leading, 40)
-                .padding(.bottom, 30)
-                .scaleEffect(appleLogin ? 1.04 : 1)
-                .animation(.spring(response: 0.4, dampingFraction: 0.6), value: appleLogin)
+//
+//                Button(action: {
+//                    loginAction(apple: true)
+//                }) {
+//                    if !AppState.isLoggedIn && !appleLogin {
+//                        HStack{
+//                            Image(systemName: "apple.logo")
+//                                .resizable()
+//                                .scaledToFit()
+//                                .frame(width: 14)
+//                            Text("Login with Apple")
+//                                .font(Font.custom("CircularSpUIv3T-Bold", size: 15))
+//                        }
+//                                .frame(width: 285, height: 37)
+//                                .padding(15)
+//                        
+//                    } else {
+//                        ThreeBounceAnimation(color: .white, width: CGFloat(15), height: CGFloat(15))
+//                            .frame(width: 285, height: 37)
+//                            .padding(15)
+//                    }
+//                }
+//                .foregroundColor(.white)
+//                .background(Color(uiColor: hexStringToUIColor(hex: "80C64A")).opacity(0.85))
+//                .cornerRadius(10)
+//                .buttonStyle(.plain)
+//                .frame(maxWidth: .infinity,  alignment: .leading)
+//                .padding(.leading, 40)
+//                .padding(.bottom, 30)
+//                .scaleEffect(appleLogin ? 1.04 : 1)
+//                .animation(.spring(response: 0.4, dampingFraction: 0.6), value: appleLogin)
                 
                 
             }

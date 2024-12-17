@@ -86,7 +86,7 @@ struct BigStarsView: View {
                 self.starScales[index] = 1.5
                 self.starOpacities[index] = 0.95
             }
-            .transition(.symbolEffect(.appear))
+            .transition(.scale.combined(with: .opacity))
     }
 }
 

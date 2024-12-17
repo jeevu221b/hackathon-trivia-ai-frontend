@@ -226,7 +226,11 @@ struct LevelButton: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
                     isTapped.toggle()
                     if(!isLocked){
-                        navigationStore.push(to: .screen6(levelId))
+                        if AppState.isMultiplayer {
+                            navigationStore.push(to: .screen7(levelId))
+                        } else{
+                            navigationStore.push(to: .screen6(levelId))
+                        }
                     }
                 }
             }

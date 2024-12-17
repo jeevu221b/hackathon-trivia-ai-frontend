@@ -50,9 +50,10 @@ func updateSession(sessionId: String, score: Int, completion: @escaping (String,
             completion("", false, "", "", "")
             return
         }
-        
+        print(data)
         do {
             let response = try JSONDecoder().decode(Response.self, from: data)
+            print(response.levels)
             updateLevels(with: response.levels)
             completion(response.levelId, response.doesNextLevelExist, response.subcategory, response.nextLevelId, response.requiredStars)
         } catch {
@@ -243,17 +244,13 @@ struct CompleteLevelView: View {
                                 withAnimation {
                                     isTapped3.toggle()
                                     navigationStore.popAllScreen6()
+                                    navigationStore.pop()
                                     navigationStore.push(to: .leaderBoardPage)
                                 }
                             }
                         }
                 }.padding(.top, 120)
 
-            }
-        }.refreshable {
-            Task{
-                print("refreshed")
-                try await DataManager.shared.fetchData()
             }
         }
         .edgesIgnoringSafeArea(.all)

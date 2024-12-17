@@ -1,4 +1,10 @@
 import SwiftUI
+import NotificationCenter
+import Pow
+import Combine
+import SystemNotification
+import UIKit
+
 
 class RoomUsers: ObservableObject {
     @Published var users: [Player] = []
@@ -15,11 +21,35 @@ struct PartyView: View {
     @EnvironmentObject private var socketHandler: SocketHandler
     @StateObject private var roomUsers = RoomUsers()
     @State private var isTapped = false
+    @State private var isActive = false
     @StateObject private var partyDataModel = PartyDataModel()
     @State private var showBackAlert = false
     @EnvironmentObject private var navigationStore : NavigationStore
     @EnvironmentObject var AppState: Game
+    @State private var showDisconnectAlert = false
 
+
+    var isCurrentUserHost: Bool {
+        print(AppState.user)
+        print(roomUsers.users)
+        if let hostUser = roomUsers.users.first(where: { $0.isHost }),
+           let currentUser = AppState.user,
+           hostUser.id == currentUser.id {
+            if !AppState.isHost {
+                print("setting ishost true")
+                AppState.isHost = true
+            }
+            return true
+            
+        }
+        if AppState.isHost {
+            print("setting ishost false")
+            AppState.isHost = false
+        }
+        return false
+    }
+    
+    
     var hostUsername: String {
         if let host = roomUsers.users.first(where: { $0.isHost }) {
             return host.username
@@ -27,13 +57,14 @@ struct PartyView: View {
         return ""
     }
 
+
     
     var body: some View {
         VStack(alignment: .leading) {
             // Party Header
             Menu().padding(.top, 40)
             HStack {
-                Text("\(hostUsername)'s party")
+                Text(isCurrentUserHost ? "Your party" : "\(hostUsername)'s party")
                     .font(Font.custom("CircularSpUIv3T-Bold", size: 30))
                     .tracking(-0.7)
                     .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
@@ -108,12 +139,14 @@ struct PartyView: View {
                     // Invite friends action
                 }) {
                     HStack(alignment: .center) {
-                        Image("whatsapp")
+                        Image(systemName:"clipboard.fill")
                             .resizable()
+                            .foregroundColor(Color(red: 175/255, green: 205/255, blue: 208/255))
                             .scaledToFit()
-                            .frame(width: 16, height: 16)
+                            .frame(width: 15, height: 15)
                             .padding(.trailing, -5)
-                        Text("Invite your friends")
+                            .offset(x: 0, y: -1)
+                        Text("Copy party code")
                             .font(Font.custom("CircularSpUIv3T-Bold", size: 11))
                             .tracking(-0.25)
                             .offset(x: 0, y: -1)
@@ -131,6 +164,8 @@ struct PartyView: View {
                     .onTapGesture {
                         isTapped.toggle()
                         withAnimation(.easeInOut(duration: 0.25)) {
+                            UIPasteboard.general.string = AppState.partySession
+                            isActive.toggle()
                             isTapped.toggle()
                         }
                     }
@@ -173,9 +208,7 @@ struct PartyView: View {
             GridView(players:  roomUsers.users)
                 .padding(.horizontal)
             
-            Spacer()
-            Spacer()
-            Spacer()
+            
         }
         .onAppear {
             var photoURL = ""
@@ -188,39 +221,37 @@ struct PartyView: View {
             }
             let data: [String: String] = [
                 "username": name,
-                "sessionId": "sessionId",
+                "sessionId":  AppState.partySession,
                 "room": "test",
                 "photoURL": photoURL
             ]
             socketHandler.socket.emit("joinRoom", data)
             
-            socketHandler.socket.on("roomUsers") { data, ack in
-                print(data)
-                var newUsers: [Player] = []
-                if let userArrays = data as? [NSArray] {
-                    for userArray in userArrays {
-                        for userDict in userArray {
-                            if let userDict = userDict as? [String: Any], let id = userDict["userId"] as? String {
-                                let player = Player(
-                                    username: userDict["username"] as? String ?? "",
-                                    score: userDict["score"] as? Int ?? 0,
-                                    rank: userDict["rank"] as? Int ?? 0,
-                                    lastRound: userDict["lastRound"] as? Int ?? 0,
-                                    imageName: userDict["imageName"] as? String ?? "",
-                                    isOnline: userDict["isOnline"] as? Bool ?? false,
-                                    id: userDict["userId"] as? String ?? "",
-                                    isHost: userDict["isHost"] as? Bool ?? false
-                                )
-                                print("player")
-                                print(player)
-                                newUsers.append(player)
+            NotificationCenter.default.addObserver(forName: .roomUsersUpdated, object: nil, queue: .main) { notification in
+                if let data = notification.object as? [Any] {
+                    var newUsers: [Player] = []
+                    if let userArrays = data as? [NSArray] {
+                        for userArray in userArrays {
+                            for userDict in userArray {
+                                if let userDict = userDict as? [String: Any], let id = userDict["userId"] as? String {
+                                    let player = Player(
+                                        username: userDict["username"] as? String ?? "",
+                                        score: userDict["score"] as? Int ?? 0,
+                                        rank: userDict["rank"] as? Int ?? 0,
+                                        lastRound: userDict["lastRound"] as? Int ?? 0,
+                                        imageName: userDict["imageName"] as? String ?? "",
+                                        isOnline: userDict["isOnline"] as? Bool ?? false,
+                                        id: userDict["userId"] as? String ?? "",
+                                        isHost: userDict["isHost"] as? Bool ?? false
+                                    )
+                                    newUsers.append(player)
+                                }
                             }
                         }
                     }
-                }
-                
-                DispatchQueue.main.async {
-                    roomUsers.users = newUsers
+                    DispatchQueue.main.async {
+                        roomUsers.users = newUsers
+                    }
                 }
             }
             
@@ -249,13 +280,18 @@ struct PartyView: View {
             
             socketHandler.socket.on("prepareForGame") { data, ack in
                 print("prepareForGame")
-                if AppState.partySession.isEmpty {
-                    navigationStore.push(to: .screen6(self.partyDataModel.levelId))
+                if !AppState.isHost {
+                    navigationStore.popAllLobby()
+                    navigationStore.popAllScreen7()
+                    navigationStore.push(to: .screen7(self.partyDataModel.levelId))
                 }
          
             }
             
-            
+        }
+        .onDisappear {
+            NotificationCenter.default.removeObserver(self, name: .roomUsersUpdated, object: nil)
+
         }
         .alert(isPresented: $showBackAlert) {
             Alert(
@@ -265,7 +301,10 @@ struct PartyView: View {
                     showBackAlert = false
                 }),
                 secondaryButton: .destructive(Text("Leave"), action: {
-                    socketHandler.leaveRoom(sessionId: "sessionId")
+                    AppState.isHost = false
+                    AppState.inParty = false
+                    socketHandler.leaveRoom(sessionId: AppState.partySession)
+                    AppState.partySession = ""
                     navigationStore.popToRoot()
                     navigationStore.push(to: .screen3)
                 })
@@ -275,6 +314,9 @@ struct PartyView: View {
         .edgesIgnoringSafeArea(.all)
         .ignoresSafeArea(.all)
         .navigationBarBackButtonHidden(true)
+        .systemNotification(isActive: $isActive) {
+            SystemNotificationContent2()
+        }
     }
 }
 
@@ -306,6 +348,10 @@ struct GridView: View {
                     }
                 }
             }
+            Spacer()
+            Spacer()
+            Spacer()
+            Spacer()
         }
     }
 }
@@ -360,33 +406,20 @@ struct EmptyPlayerView: View {
 struct PlayerView: View {
     let player: Player
     @State var isTapped = false
+    @EnvironmentObject var AppState: Game
+
     
     var body: some View {
         VStack(spacing: 10) {
             ZStack {
                 VStack {
                     VStack {
-                        ZStack {
-                            if player.rank <= 3 {
-                                Image(player.rank == 1 ? "goldcrown" : player.rank == 2 ? "silvercrown" : "bronzecrown")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 33, height: 33)
-                                    .padding(.bottom, -15)
-                                    .padding(.leading, 15)
-                                    .rotationEffect(.degrees(12), anchor: .center)
-                                    .zIndex(2)
-                            } else {
-                                Image("cry")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 33, height: 33)
-                                    .padding(.bottom, -15)
-                                    .padding(.leading, 15)
-                                    .zIndex(2)
-                            }
+                        if player.rank > 0 {
+                            //put this inside a view and apply this effect
+                            //.changeEffect(.jump(height: 100), value: count)
+                            PlayerRankView(player: player)
+                            .zIndex(2)
                         }
-                        .zIndex(2)
                         
                         AsyncImage(url: URL(string: player.imageName)) { image in
                             image
@@ -398,11 +431,12 @@ struct PlayerView: View {
                             ProgressView()
                         }
                     }
-                    .padding(.top, 0)
+                    .padding(.top, 5)
                     
                     HStack {
-                        Text(player.username)
-                            .font(Font.custom("CircularSpUIv3T-Bold", size: 12))
+                        // show "You" if the player is the current user
+                        Text(AppState.user?.id == player.id ? "You" : player.username)
+                            .font(Font.custom("CircularSpUIv3T-Bold", size: 15))
                             .padding(.trailing, 0)
                             .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
                             .tracking(-0.4)
@@ -414,7 +448,7 @@ struct PlayerView: View {
                             .padding(.leading, -3)
                         
                         Text(player.isOnline ? "online" : "offline")
-                            .font(Font.custom("CircularSpUIv3T-Book", size: 9))
+                            .font(Font.custom("CircularSpUIv3T-Book", size: 12))
                             .foregroundColor(Color(hexStringToUIColor(hex: "A5A5A5")))
                             .padding(.leading, -6)
                             .tracking(-0.4)
@@ -428,7 +462,7 @@ struct PlayerView: View {
                             .foregroundColor(Color(hexStringToUIColor(hex: "A5A5A5")))
                             .tracking(-0.4)
                         Text("\(player.score)")
-                            .font(Font.custom("CircularSpUIv3T-Bold", size: 9))
+                            .font(Font.custom("CircularSpUIv3T-Bold", size: 13))
                             .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
                             .padding(.leading, -6)
                         
@@ -436,23 +470,13 @@ struct PlayerView: View {
                             .foregroundColor(Color(hexStringToUIColor(hex: "A5A5A5")))
                             .tracking(-0.4)
                         Text("#\(player.rank)")
-                            .font(Font.custom("CircularSpUIv3T-Bold", size: 9))
+                            .font(Font.custom("CircularSpUIv3T-Bold", size: 14))
                             .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
                             .padding(.leading, -6)
                     }
-                    .font(Font.custom("CircularSpUIv3T-Book", size: 9))
+                    .font(Font.custom("CircularSpUIv3T-Book", size: 13))
                     .padding(.bottom, 1)
                     
-                    HStack {
-                        Text("Last round:")
-                            .foregroundColor(Color(hexStringToUIColor(hex: "A5A5A5")))
-                            .tracking(-0.4)
-                        Text("\(player.lastRound)")
-                            .font(Font.custom("CircularSpUIv3T-Bold", size: 9))
-                            .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
-                            .padding(.leading, -6)
-                    }
-                    .font(Font.custom("CircularSpUIv3T-Book", size: 9))
                 }
             }
             
@@ -470,7 +494,7 @@ struct PlayerView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(10)
-        .background(Color(uiColor: hexStringToUIColor(hex: isTapped ? "D8E7E9" : "FFFFFF")))
+         .background(Color(uiColor: hexStringToUIColor(hex: (isTapped || AppState.user?.id == player.id) ? "F1F1F1" : "FFFFFF")))
         .cornerRadius(15)
         .clipShape(RoundedRectangle(cornerRadius: 15))
         .overlay(
@@ -485,6 +509,42 @@ struct PlayerView: View {
         }
     }
 }
+
+
+struct PlayerRankView: View {
+    var player: Player
+    @State private var count: Int = 0
+    private let timer = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
+
+    var body: some View {
+        ZStack {
+            if player.rank <= 2 {
+                Image(player.rank == 1 ? "goldcrown" : player.rank == 2 ? "silvercrown" : "bronzecrown")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 53, height: 53)
+                    .padding(.bottom, -15)
+                    .padding(.top, -15)
+                    .padding(.leading, 15)
+                    .rotationEffect(.degrees(12), anchor: .center)
+                    .zIndex(2)
+            } else {
+                Image("cry")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 53, height: 53)
+                    .padding(.bottom, -15)
+                    .padding(.leading, 15)
+                    .zIndex(2)
+            }
+        }
+        .changeEffect(.jump(height: 13), value:  player.rank <= 2 ? count : 0) // Apply the custom effect
+        .onReceive(timer) { _ in
+            count += 1
+        }
+    }
+}
+
 
 #Preview {
     PartyView()

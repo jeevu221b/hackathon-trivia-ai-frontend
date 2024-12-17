@@ -114,9 +114,9 @@ struct UserProfileView: View {
     @ViewBuilder
     private var optionsSection: some View {
         VStack(spacing: 0) {
-            OptionRow(icon: "bell.badge.fill", text: "Notifications", hasToggle: true)
-            OptionRow(icon: "person.2.fill", text: "Enable multiplayer mode", hasToggle: true)
-            OptionRow(icon: "speaker.wave.1.fill", text: "Enable sounds", hasToggle: true)
+            OptionRow(icon: "bell.badge.fill", text: "Notifications", hasToggle: true, isToggled: .constant(false))
+            OptionRow(icon: "person.2.fill", text: "Enable multiplayer mode", hasToggle: true, isToggled: $AppState.isMultiplayer)
+            OptionRow(icon: "speaker.wave.1.fill", text: "Enable sounds", hasToggle: true, isToggled: .constant(false))
         }
         .background(_gery)
         .cornerRadius(15)
@@ -198,8 +198,8 @@ struct OptionRow: View {
     var icon: String
     var text: String
     var hasToggle: Bool = false
-    @State private var isToggled = false
-    
+    @Binding var isToggled: Bool
+
     var body: some View {
         HStack {
             Image(systemName: icon)
@@ -229,6 +229,5 @@ struct OptionRow: View {
 #Preview {
     UserProfileView()
         .statusBar(hidden: true)
-        .environmentObject(Game()) 
+        .environmentObject(Game())
 }
-

@@ -21,7 +21,7 @@ struct ScreenSix: View {
         ZStack {
             if isLoading {
                 ZStack(alignment: .top) {
-                    Color(loadingGradientColor)
+                    Color(uiColor: hexStringToUIColor(hex: "137662"))
                     .edgesIgnoringSafeArea(.all)
                 }
                 
@@ -342,10 +342,7 @@ struct OptionsView: View {
                     isCorrect: options.firstIndex(of: option.text) == correctAnswer,
                     isAnswered: isAnswered
                 )
-                .transition(.movingParts.wipe(
-                    angle: .degrees(-45),
-                    blurRadius: 50
-                  ))
+                
                   .zIndex(1)
                 .onTapGesture {
                     if !isAnswered {
@@ -397,6 +394,11 @@ struct OptionButton: View {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(Color.white.opacity(0.7), lineWidth: isAnswered && isSelected ? 10 : 0)
             )
+            .transition(.movingParts.wipe(
+                angle: .degrees(-125),
+                blurRadius: 40
+              ))
+        
     }
 }
 

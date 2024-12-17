@@ -1,6 +1,5 @@
 import SwiftUI
 import UIKit
-import SystemNotification
 import Pow
 let containerWidth_: CGFloat = UIScreen.main.bounds.width - 68.0
 
@@ -16,6 +15,7 @@ struct ScreenSixMultiplayer: View {
     @State private var subcategoryName: String = ""
     @EnvironmentObject var AppState: Game
     @EnvironmentObject private var socketHandler: SocketHandler
+    @EnvironmentObject private var navigationStore : NavigationStore
 
     
     private let loadingGradientColor = Color(uiColor: hexStringToUIColor(hex: "137662"))
@@ -24,7 +24,7 @@ struct ScreenSixMultiplayer: View {
         ZStack {
             if isLoading {
                 ZStack(alignment: .top) {
-                    Color(loadingGradientColor)
+                    Color(uiColor: hexStringToUIColor(hex: "137662"))
                     .edgesIgnoringSafeArea(.all)
                 }
                 
@@ -36,8 +36,8 @@ struct ScreenSixMultiplayer: View {
             }
         }
         .onAppear {
-            if !AppState.partySession.isEmpty {
-                socketHandler.startGame(sessionId: "sessionId")
+            if AppState.isHost {
+                socketHandler.startGame(sessionId: AppState.partySession)
             }
             Task {
                 if let levelData = getLevel(by: levelId) {
@@ -67,11 +67,21 @@ struct ScreenSixMultiplayer: View {
         do {
             let fetchedQuestions = try await getQuestions(levelId: levelId, multiplayer: true)
             questions = fetchedQuestions
-            socketHandler.isReadyNow(sessionId: "sessionId")
+            socketHandler.isReadyNow(sessionId: AppState.partySession)
             socketHandler.socket.on("allReady") { data, ack in
                 print("allready")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     isLoading = false
+                }
+            }
+            
+            socketHandler.socket.on("sendToLobby") { data, ack in
+                print("sending to lobby")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    currentQuestionIndex = 0
+                    navigationStore.popAllScreen7()
+                    navigationStore.popAllLobby()
+                    navigationStore.push(to: .lobbyView)
                 }
             }
            
@@ -85,6 +95,7 @@ struct QuizView_: View {
     @State private var selectedAnswer: Int?
     @State private var isAnswered = false
     @State private var score: Int = 0
+    @State private var lastScore: Int = 0
     @State private var isActive = false
 
     var questions: [Question]
@@ -112,7 +123,7 @@ struct QuizView_: View {
         @Binding var isActive: Bool
         @Binding var isAnswered: Bool
         @State var counter: Int = 0
-        var countTo: Int = 15
+        var countTo: Int = 25
         @EnvironmentObject var AppState: Game
         
         var body: some View {
@@ -128,32 +139,33 @@ struct QuizView_: View {
                     }
                 }
             }
-            .onChange(of: counter) { oldValue, newValue in
-                if newValue == countTo {
+            .onReceive(timer) { _ in
+                guard isActive else { return }
+                if counter < countTo {
+                    counter += 1
+                } else {
                     if currentQuestionIndex == 9 {
                         timer.upstream.connect().cancel()
                         isActive = false
+                    } else {
+                        currentQuestionIndex += 1
                     }
-                        counter = 0
-                    
+                    counter = 0
                 }
             }
-            .onChange(of: currentQuestionIndex) {
-                    counter = 0
+            .onChange(of: currentQuestionIndex) { _ in
+                        counter = 0
                     }
         }
     }
     
-    func scoreScale(for score: Int) -> CGFloat {
-            return score == 0 ? 1.0 : 1.2
-        }
     
     var body: some View {
         ZStack(alignment: .top) {
             quizBackgroundColor.edgesIgnoringSafeArea(.all)
             
             VStack {
-                PlayerScoresView().padding(.top, 39)
+                PlayerScoresView(updateScoreFromSocket:updateScoreFromSocket).padding(.top, 39)
 
                 if currentQuestionIndex < 10 && !questions.isEmpty {
                     VStack(spacing: 0) {
@@ -215,7 +227,7 @@ struct QuizView_: View {
                                     .opacity(0.65)
                                     .changeEffect(
                                       .rise(origin: UnitPoint(x: -0.75, y: -0.25)) {
-                                        Text("+10").font(Font.custom("CircularSpUIv3T-Bold", size: 37))
+                                        Text("+\(lastScore)").font(Font.custom("CircularSpUIv3T-Bold", size: 37))
                                       }, value: score)
                                     .foregroundStyle(levelTextColor)
                                 
@@ -246,7 +258,7 @@ struct QuizView_: View {
                 if currentQuestionIndex < 10 {
                     VStack {
                         Text(questions[currentQuestionIndex].question)
-                            .frame(height: 180, alignment: .center)
+                            .frame(height: 190, alignment: .center)
                             .font(Font.custom("CircularSpUIv3T-Book", size: 24))
                             .tracking(-0.6)
                             .foregroundColor(questionTextColor)
@@ -262,7 +274,8 @@ struct QuizView_: View {
                         OptionsView_(
                             options: questions[currentQuestionIndex].options,
                             selectedAnswer: $selectedAnswer,
-                            correctAnswer: questions[currentQuestionIndex].answer,
+                            correctAnswer:
+                                questions[currentQuestionIndex].answer,
                             isAnswered: $isAnswered,
                             updateScore: updateScore
                         )
@@ -279,9 +292,6 @@ struct QuizView_: View {
         .navigationBarBackButtonHidden(true)
         .edgesIgnoringSafeArea(.all)
         .environmentObject(AppState)
-        .systemNotification(isActive: $isActive) {
-            SystemNotificationContent()
-        }
         .onAppear{
             socketHandler.socket.on("nextQuestion") { data, ack in
                 print("nextQuestion")
@@ -309,8 +319,7 @@ struct QuizView_: View {
             
         }
         if currentQuestionIndex < questions.count {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
-                
+            DispatchQueue.main.async{
                 withAnimation {
                     currentQuestionIndex = index
                 }
@@ -321,27 +330,19 @@ struct QuizView_: View {
     }
     
     func updateScore(isCorrect: Bool) {
+        socketHandler.onAnswer(sessionId: AppState.partySession, index: currentQuestionIndex, answer: isCorrect)
         
-        socketHandler.onAnswer(sessionId: "sessionId", index: currentQuestionIndex, answer: isCorrect)
-        
-        if isCorrect {
-                score += 10
-        }
+//        if isCorrect {
+//                score += 10
+//        }
+    }
+    
+    func updateScoreFromSocket(num: Int) {
+            lastScore = num
+            score += num
     }
 }
 
-struct SystemNotificationContent_: View {
-    var body: some View {
-        HStack {
-            Image(systemName: "gauge.with.needle.fill")
-                .padding(.trailing, -25)
-                .padding(.leading, 10)
-            Text("You've run out of time")
-                .padding(.leading, 5)
-                .padding(15)
-        }
-    }
-}
 
 struct OptionsView_: View {
     struct Option: Identifiable {
@@ -370,11 +371,6 @@ struct OptionsView_: View {
                     isCorrect: options.firstIndex(of: option.text) == correctAnswer,
                     isAnswered: isAnswered
                 )
-                .transition(.movingParts.wipe(
-                    angle: .degrees(-45),
-                    blurRadius: 50
-                  ))
-                  .zIndex(1)
                 .onTapGesture {
                     if !isAnswered {
                         let isCorrect = options.firstIndex(of: option.text) == correctAnswer
@@ -423,6 +419,10 @@ struct OptionButton_: View {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(Color.white.opacity(0.7), lineWidth: isAnswered && isSelected ? 10 : 0)
             )
+            .transition(.movingParts.wipe(
+                angle: .degrees(-125),
+                blurRadius: 40
+              ))
     }
 }
 

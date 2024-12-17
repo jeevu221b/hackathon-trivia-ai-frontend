@@ -11,26 +11,32 @@ struct Players: Codable, Identifiable {
     let username: String
     let score: Int
     let isOnline: Bool
+    let isMe: Bool?
     let userId: String
     let answerState: AnswerState
+    let lastQuestionScore: Int
 }
 
 struct PlayerScoresView: View {
     @State private var players: [Players] = []
     @EnvironmentObject private var socketHandler: SocketHandler
     @EnvironmentObject var AppState: Game
+    var updateScoreFromSocket: (Int) -> Void
     
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
             ForEach(players) { player in
-                PlayerScoreView(
-                    playerName: player.username,
-                    score: player.score,
-                    answerState: player.answerState,
-                    isDisconnected: !player.isOnline
-                )
+                if player.userId != AppState.user?.id {
+                    PlayerScoreView(
+                        playerName: player.username,
+                        score: player.score,
+                        answerState: player.answerState,
+                        isDisconnected: !player.isOnline
+                    )
+                }
             }
-        }.onAppear {
+        }
+        .onAppear {
             print("here in onappear PlayerScoresView")
             let data: [String: String] = [
                 "sessionId": "sessionId",
@@ -46,7 +52,15 @@ struct PlayerScoresView: View {
                     if let jsonData = jsonData {
                         let newPlayers = try? decoder.decode([Players].self, from: jsonData)
                         DispatchQueue.main.async {
-                            self.players = newPlayers ?? []
+                            // Filter out the current user if their id matches AppState.user.id
+                            self.players = newPlayers?.filter { $0.userId != AppState.user?.id } ?? []
+                          
+                            if let currentUser = newPlayers?.first(where: {
+                                                $0.isMe == true && $0.userId == AppState.user?.id && $0.lastQuestionScore > 0
+                                            }) {
+                                                updateScoreFromSocket(currentUser.lastQuestionScore)
+                                            }
+                            
                         }
                     }
                 }
@@ -67,15 +81,15 @@ struct PlayerScoreView: View {
                 Text(playerName)
                     .tracking(-0.4)
                     .foregroundColor(.white.opacity(0.6))
-                    .font(Font.custom("CircularSpUIv3T-Book", size: 12))
-                    .frame(width: 75, height: 42, alignment: .center)
-                    .background(Color(answerStateColor(for: answerState)))
+                    .font(Font.custom("CircularSpUIv3T-Book", size: 13))
+                    .frame(width: 95, height: 43, alignment: .center)
+                    .background(answerStateColor(for: answerState))
                 
                 Text("\(score)")
                     .tracking(-0.4)
                     .foregroundColor(.white.opacity(0.8))
-                    .font(Font.custom("CircularSpUIv3T-Bold", size: 11))
-                    .frame(width: 37, height: 42, alignment: .center)
+                    .font(Font.custom("CircularSpUIv3T-Bold", size: 15))
+                    .frame(width: 40, height: 43, alignment: .center)
                     .padding(.leading, -8)
             }
             .padding(0)
@@ -127,8 +141,9 @@ extension Color {
     }
 }
 
-
 #Preview {
-    PlayerScoresView()
-        .environmentObject(Game())
+    PlayerScoresView(updateScoreFromSocket: { num in
+        print("Update score from socket with value: \(num)")
+    })
+    .environmentObject(Game())
 }

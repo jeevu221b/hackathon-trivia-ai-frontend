@@ -30,7 +30,7 @@ struct ScreenThree: View {
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                         isLeaderTapped.toggle()
-                        navigationStore.push(to: .lobbyView)
+                        navigationStore.push(to: .leaderBoardPage)
                     }
                 }
         }
