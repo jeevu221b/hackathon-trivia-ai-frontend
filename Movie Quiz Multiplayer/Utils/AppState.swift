@@ -81,8 +81,8 @@ class Game: ObservableObject {
                 lastName: nil,
                 phoneNumber: nil,
                 photoURL: URL(string: "https://lh3.googleusercontent.com/a/ACg8ocJxG6EmZgSX5ZfwLnLXLOp4vLYf--DvzierxRghgt_ZMdYghxk=s96-c"),
-                creationDate: ISO8601DateFormatter().date(from: "2024-12-12T15:25:12+0000"),
-                lastSignInDate: ISO8601DateFormatter().date(from: "2024-12-13T17:25:54+0000")
+                creationDate: ISO8601DateFormatter().date(from: "2024-12-13T15:25:12+0000"),
+                lastSignInDate: ISO8601DateFormatter().date(from: "2024-12-14T17:25:54+0000")
             )
             
             let encoder = JSONEncoder()

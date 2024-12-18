@@ -116,7 +116,7 @@ struct CreatePartyView: View {
                                 }
                                 
                             }
-                            .padding(.top, 3)
+                            .padding(.top, 5)
                             
                             // Ensure the button does not break
                         }
@@ -168,7 +168,7 @@ struct CreatePartyView: View {
                                 
                             )
 //                            .onTapGesture
-                            .padding(.top, 3)
+                            .padding(.top, 5)
                             
                             // Ensure the button does not break
                         }

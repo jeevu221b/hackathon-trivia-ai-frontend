@@ -63,11 +63,12 @@ struct PartyView: View {
         VStack(alignment: .leading) {
             // Party Header
             Menu().padding(.top, 40)
-            HStack {
-                Text(isCurrentUserHost ? "Your party" : "\(hostUsername)'s party")
-                    .font(Font.custom("CircularSpUIv3T-Bold", size: 30))
-                    .tracking(-0.7)
-                    .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
+            VStack(alignment: .leading) {
+                    Text(isCurrentUserHost ? "Your party" : "\(hostUsername)'s party")
+                        .font(Font.custom("CircularSpUIv3T-Bold", size: 30))
+                        .tracking(-0.7)
+                        .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
+                
             }
             .padding(.horizontal)
             .padding(.bottom, 15)
@@ -198,16 +199,26 @@ struct PartyView: View {
             .padding(.leading, 7)
             
             // Players
-            Text("Players")
-                .font(Font.custom("CircularSpUIv3T-Bold", size: 30))
-                .tracking(-0.7)
-                .padding(.horizontal)
-                .padding(.leading, 5)
-                .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
+            HStack{
+                
+                Text("Players")
+                    .font(Font.custom("CircularSpUIv3T-Bold", size: 30))
+                    .tracking(-0.7)
+                    .padding(.horizontal)
+                    .padding(.leading, 5)
+                    .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
+                if roomUsers.users.count > 1 { Text("\(roomUsers.users.count)").font(Font.custom("DINAlternate-Bold", size: 30))
+                        .tracking(-0.7)
+                        .padding(.leading, -15)
+                        .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")).opacity(0.2))
+                }
+            }
             
-            GridView(players:  roomUsers.users)
-                .padding(.horizontal)
-            
+            ScrollView {
+                GridView(players: roomUsers.users)
+                    .padding(.horizontal)
+            }
+            .padding(.bottom)
             
         }
         .onAppear {
@@ -442,7 +453,7 @@ struct PlayerView: View {
                             .tracking(-0.4)
                         
                         Circle()
-                            .fill(player.isOnline ? Color(hexStringToUIColor(hex: "3CF465")) : Color.gray)
+                            .fill(player.isOnline ? Color(hexStringToUIColor(hex: "3CF465")).opacity(0.4) : Color.gray)
                             .frame(width: 5, height: 5)
                             .offset(x: 0, y: 1)
                             .padding(.leading, -3)
@@ -462,14 +473,14 @@ struct PlayerView: View {
                             .foregroundColor(Color(hexStringToUIColor(hex: "A5A5A5")))
                             .tracking(-0.4)
                         Text("\(player.score)")
-                            .font(Font.custom("CircularSpUIv3T-Bold", size: 13))
+                            .font(Font.custom("DINAlternate-Bold", size: 13))
                             .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
                             .padding(.leading, -6)
                         
                         Text("Rank:")
                             .foregroundColor(Color(hexStringToUIColor(hex: "A5A5A5")))
                             .tracking(-0.4)
-                        Text("#\(player.rank)")
+                        Text("\(player.rank)")
                             .font(Font.custom("CircularSpUIv3T-Bold", size: 14))
                             .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
                             .padding(.leading, -6)
@@ -499,7 +510,7 @@ struct PlayerView: View {
         .clipShape(RoundedRectangle(cornerRadius: 15))
         .overlay(
             RoundedRectangle(cornerRadius: 15)
-                .stroke(Color(uiColor: hexStringToUIColor(hex: "FFFFFF")).opacity(0.40), lineWidth: isTapped ? 15 : 9)
+                .stroke(Color(uiColor: hexStringToUIColor(hex: "FFFFFF")).opacity(0.40), lineWidth: isTapped ? 17 : 14)
         )
         .onTapGesture {
             isTapped.toggle()

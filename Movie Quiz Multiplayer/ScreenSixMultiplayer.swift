@@ -179,7 +179,7 @@ struct QuizView_: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, currentQuestionIndex == 0 ? 33 : currentQuestionIndex == 9 ? 25 : 31)
-                    .padding(.top, 13)
+                    .padding(.top, -20)
                     .zIndex(1)
                     
                     ZStack(alignment: .trailing) {
@@ -188,13 +188,13 @@ struct QuizView_: View {
                                 .scaledToFit()
                                 .frame(width: 110, height: 110)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.top, -119)
+                                .padding(.top, -121)
                                 .padding(.leading, 0)
                         
                         
                         CountdownView(currentQuestionIndex: $currentQuestionIndex, isActive: $isActive, isAnswered: $isAnswered
                         )
-                            .padding(.top, -9)
+                            .padding(.top, -8)
                             .padding(.leading, 38.5)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -223,8 +223,8 @@ struct QuizView_: View {
                             HStack(spacing: 0) {
                                 Text("\(score)")
                                     .foregroundColor(scoreTextColor)
-                                    .font(Font.custom("CircularSpUIv3T-Bold", size: 20))
-                                    .opacity(0.65)
+                                    .font(Font.custom("CircularSpUIv3T-Bold", size: 23))
+                                    .opacity(0.85)
                                     .changeEffect(
                                       .rise(origin: UnitPoint(x: -0.75, y: -0.25)) {
                                         Text("+\(lastScore)").font(Font.custom("CircularSpUIv3T-Bold", size: 37))
@@ -236,7 +236,7 @@ struct QuizView_: View {
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .trailing)
-                    .padding(.top, -113)
+                    .padding(.top, -121)
                     .padding(.trailing, 25)
                     
                     if !image.isEmpty {
@@ -363,7 +363,7 @@ struct OptionsView_: View {
     private let unselectedColor = Color.white.opacity(0.7)
     
     var body: some View {
-        VStack(spacing: 22) {
+        VStack(spacing: 20) {
             ForEach(options.indices.map { Option(text: options[$0]) }) { option in
                 OptionButton_(
                     text: option.text,
@@ -429,9 +429,10 @@ struct OptionButton_: View {
 
 struct ScreenSixMultiplayerView: PreviewProvider {
    static var previews: some View {
-       ScreenSixMultiplayer(levelId: "664b95a253f7db8497541d15")
+       ScreenSixMultiplayer(levelId: "66795d246d44ae5ca1bbd79b")
            .environmentObject(Game())
            .environmentObject(NavigationStore())
+           .environmentObject(SocketHandler())
        
    }
 }
