@@ -165,7 +165,9 @@ struct QuizView_: View {
             quizBackgroundColor.edgesIgnoringSafeArea(.all)
             
             VStack {
-                PlayerScoresView(updateScoreFromSocket:updateScoreFromSocket).padding(.top, 39)
+                PlayerScoresView(updateScoreFromSocket:updateScoreFromSocket)
+                    .padding(.top, 39)
+                    .padding(.bottom, 23)
 
                 if currentQuestionIndex < 10 && !questions.isEmpty {
                     VStack(spacing: 0) {
