@@ -167,7 +167,7 @@ struct QuizView_: View {
             VStack {
                 PlayerScoresView(updateScoreFromSocket:updateScoreFromSocket)
                     .padding(.top, 39)
-                    .padding(.bottom, 23)
+                    .padding(.bottom, 27)
 
                 if currentQuestionIndex < 10 && !questions.isEmpty {
                     VStack(spacing: 0) {
@@ -190,7 +190,7 @@ struct QuizView_: View {
                                 .scaledToFit()
                                 .frame(width: 110, height: 110)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.top, -121)
+                                .padding(.top, -120)
                                 .padding(.leading, 0)
                         
                         

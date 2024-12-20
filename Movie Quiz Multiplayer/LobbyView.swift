@@ -207,11 +207,11 @@ struct PartyView: View {
                     .padding(.horizontal)
                     .padding(.leading, 5)
                     .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
-                if roomUsers.users.count > 1 { Text("\(roomUsers.users.count)").font(Font.custom("DINAlternate-Bold", size: 30))
-                        .tracking(-0.7)
-                        .padding(.leading, -15)
-                        .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")).opacity(0.2))
-                }
+//                if roomUsers.users.count > 1 { Text("\(roomUsers.users.count)").font(Font.custom("DINAlternate-Bold", size: 30))
+//                        .tracking(-0.7)
+//                        .padding(.leading, -15)
+//                        .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")).opacity(0.2))
+//                }
             }
             
             ScrollView {
@@ -473,7 +473,7 @@ struct PlayerView: View {
                             .foregroundColor(Color(hexStringToUIColor(hex: "A5A5A5")))
                             .tracking(-0.4)
                         Text("\(player.score)")
-                            .font(Font.custom("DINAlternate-Bold", size: 13))
+                            .font(Font.custom("CircularSpUIv3T-Bold", size: 13))
                             .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
                             .padding(.leading, -6)
                         
@@ -505,12 +505,12 @@ struct PlayerView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(10)
-         .background(Color(uiColor: hexStringToUIColor(hex: (isTapped || AppState.user?.id == player.id) ? "F1F1F1" : "FFFFFF")))
+        .background(Color(uiColor: hexStringToUIColor(hex: isTapped ? "EAFDFF" : player.rank == 1 ? "FFF9E8": "FFFFFF")))
         .cornerRadius(15)
         .clipShape(RoundedRectangle(cornerRadius: 15))
         .overlay(
             RoundedRectangle(cornerRadius: 15)
-                .stroke(Color(uiColor: hexStringToUIColor(hex: "FFFFFF")).opacity(0.40), lineWidth: isTapped ? 17 : 14)
+                .stroke(Color(uiColor: hexStringToUIColor(hex: player.rank == 1 ? "F9EDCC": "FFFFFF")).opacity(0.40), lineWidth: isTapped ? 17 : 14)
         )
         .onTapGesture {
             isTapped.toggle()
