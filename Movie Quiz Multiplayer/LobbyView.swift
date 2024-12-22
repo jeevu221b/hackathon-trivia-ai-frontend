@@ -529,11 +529,11 @@ struct PlayerRankView: View {
 
     var body: some View {
         ZStack {
-            if player.rank <= 2 {
+            if player.rank <= 3 {
                 Image(player.rank == 1 ? "goldcrown" : player.rank == 2 ? "silvercrown" : "bronzecrown")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 53, height: 53)
+                    .frame(width: 47, height: 47)
                     .padding(.bottom, -15)
                     .padding(.top, -15)
                     .padding(.leading, 15)
@@ -543,13 +543,13 @@ struct PlayerRankView: View {
                 Image("cry")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 53, height: 53)
+                    .frame(width: 47, height: 47)
                     .padding(.bottom, -15)
                     .padding(.leading, 15)
                     .zIndex(2)
             }
         }
-        .changeEffect(.jump(height: 13), value:  player.rank <= 2 ? count : 0) // Apply the custom effect
+        .changeEffect(.jump(height: 8), value:  player.rank <= 2 ? count : 0) // Apply the custom effect
         .onReceive(timer) { _ in
             count += 1
         }
