@@ -69,6 +69,11 @@ struct PartyView: View {
                         .tracking(-0.7)
                         .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
                 
+                Text(socketHandler.isConnected ? "connected" : "disconnected")
+                    .font(Font.custom("CircularSpUIv3T-Bold", size: 30))
+                    .tracking(-0.7)
+                    .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
+                
             }
             .padding(.horizontal)
             .padding(.bottom, 15)

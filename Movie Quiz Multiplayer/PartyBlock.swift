@@ -38,6 +38,7 @@ struct CreatePartyView: View {
     @EnvironmentObject var AppState: Game
     @EnvironmentObject private var navigationStore : NavigationStore
     @State private var isActive = false
+    @EnvironmentObject private var socketHandler: SocketHandler
 
 
     
@@ -224,6 +225,24 @@ struct SystemNotificationContent2: View {
 
 
 struct SystemNotificationContent3: View {
+    var body: some View {
+            HStack{
+                Image(systemName: "clipboard.fill")
+                    .font(.system(size: 15))
+                    .padding(.trailing, -45)
+                    .padding(.leading, 17)
+                Text("Invalid party code")
+                    .font(.custom("CircularSpUIv3T-Bold", size: 12))
+                    .padding(.leading, 5)
+                    .padding(15)
+            
+        }
+    }
+}
+
+
+
+struct SystemNotificationContent4: View {
     var body: some View {
             HStack{
                 Image(systemName: "clipboard.fill")
@@ -443,4 +462,5 @@ struct PartyCreatedView: View {
     PartyBox()
         .environmentObject(NavigationStore())
         .environmentObject(Game())
+        .environmentObject(SocketHandler())
 }

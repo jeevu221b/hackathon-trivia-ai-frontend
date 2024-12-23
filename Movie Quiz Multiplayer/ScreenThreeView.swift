@@ -165,52 +165,50 @@ struct CategoryCard: View {
     @State private var isTapped = false
     
     var body: some View {
-        HStack {
-            ZStack(alignment: .leading) {
-                VStack(alignment: .leading) {
-                    Text(title)
-                        .foregroundColor(.black)
-                        .tracking(-0.5)
-                        .font(Font.custom("CircularSpUIv3T-Bold", size: 19))
-                    
-                    HStack(spacing: 0) {
-                        Image(systemName: "bolt.fill")
-                            .foregroundColor(Color(uiColor: hexStringToUIColor(hex: "5F672D")))
-                            .font(.system(size: 8))
-                            .padding(.trailing, 2)
-                        Text(description)
-                            .font(Font.custom("CircularStd-Book", size: 9))
-                            .foregroundColor(Color(uiColor: hexStringToUIColor(hex: "5F672D")))
-                    }
-                }
-                .padding(.top, -87)
-                .padding(.leading, 16)
-                .zIndex(1)
+        VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 5) {
+                Text(title)
+                    .foregroundColor(.black)
+                    .tracking(-0.5)
+                    .font(Font.custom("CircularSpUIv3T-Bold", size: 19))
                 
-                AsyncImage(url: URL(string: "\(baseS3)\(imageName)")) { image in
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 150, height: 150, alignment: .trailing)
-                        .padding(.top, 60)
-                        .padding(.leading, 48)
-                } placeholder: {
-                    ProgressView()
-                }
+                HStack(spacing: 2) {
+                    Image(systemName: "bolt.fill")
+                        .foregroundColor(Color(uiColor: hexStringToUIColor(hex: "5F672D")))
+                        .font(.system(size: 8))
+                    Text(description)
+                        .font(Font.custom("CircularStd-Book", size: 9))
+                        .foregroundColor(Color(uiColor: hexStringToUIColor(hex: "5F672D")))
+                }.padding(.top, -5)
+            }
+            .padding(.top, 17)
+            .padding(.leading, 16)
+            
+            Spacer()
+            
+            AsyncImage(url: URL(string: "\(baseS3)\(imageName)")) { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: UIScreen.main.bounds.width * 0.5, height: 140)
+                    .clipped()
+            } placeholder: {
+                ProgressView()
+                    .frame(width: UIScreen.main.bounds.width * 0.5, height: 140)
             }
         }
-        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .topLeading)
-        .background(.white)
+        .frame(width: UIScreen.main.bounds.width * 0.5, height: 205)
+        .background(Color.white)
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(.white, lineWidth: isTapped ? 10 : 0)
+                .stroke(Color.white, lineWidth: isTapped ? 10 : 0)
         )
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .padding(.horizontal, 10)
         .scaleEffect(isTapped ? 1.2 : 1)
         .animation(.spring(response: 0.4, dampingFraction: 0.6))
         .onTapGesture {
-            socketHandler.updatePartyData(name: title , id: "category", value: categoryId, sessionId: AppState.partySession)
+            socketHandler.updatePartyData(name: title, id: "category", value: categoryId, sessionId: AppState.partySession)
             
             withAnimation(.easeInOut(duration: 0.3)) {
                 isTapped.toggle()
@@ -223,9 +221,15 @@ struct CategoryCard: View {
     }
 }
 
+
+
+
+
+
 #Preview {
     ScreenThree()
         .statusBar(hidden: true)
         .environmentObject(NavigationStore())
         .environmentObject(Game())
+        .environmentObject(SocketHandler())
 }

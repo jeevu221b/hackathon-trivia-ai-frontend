@@ -24,9 +24,9 @@ class SocketHandler: ObservableObject {
             .log(true),
             .compress,
             .reconnects(true),
-            .reconnectAttempts(5),
-            .reconnectWaitMax(5),
-            .reconnectWait(3),
+            .reconnectAttempts(-1),
+            .reconnectWaitMax(3),
+            .reconnectWait(2),
             .forcePolling(true),
             .extraHeaders(["Authorization": "\(token)"])
         ]
