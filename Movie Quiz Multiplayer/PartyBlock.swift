@@ -263,9 +263,9 @@ struct PartyCreatedView: View {
     @State var isTapped = false
     @State var isTapped2 = false
     @EnvironmentObject var AppState: Game
-    @StateObject private var roomUsers = RoomUsers()
     @State private var isActive = false
     @EnvironmentObject private var navigationStore : NavigationStore
+    @EnvironmentObject private var socketHandler: SocketHandler
 
 
 
@@ -280,7 +280,7 @@ struct PartyCreatedView: View {
                         .padding(.top, 3)
                     
                     HStack {
-                        ForEach(roomUsers.users, id: \.id) { user in
+                        ForEach(AppState.roomUsers, id: \.id) { user in
                             AsyncImage(url: URL(string: user.imageName)) { image in
                                 image
                                     .resizable()
@@ -415,6 +415,13 @@ struct PartyCreatedView: View {
             
         }.frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
             .onAppear {
+                socketHandler.socket.on("socketConnected") { data, ack in
+                    AppState.isHost = false
+                    AppState.inParty = false
+                    AppState.partySession = ""
+                    AppState.roomUsers = []
+                }
+                
                 NotificationCenter.default.addObserver(forName: .roomUsersUpdated, object: nil, queue: .main) { notification in
                     if let data = notification.object as? [Any] {
                         var newUsers: [Player] = []
@@ -440,7 +447,7 @@ struct PartyCreatedView: View {
                         DispatchQueue.main.async {
                             print("newwwUsers")
                             print(newUsers)
-                            roomUsers.users = newUsers
+                            AppState.roomUsers = newUsers
                         }
                     }
                 }

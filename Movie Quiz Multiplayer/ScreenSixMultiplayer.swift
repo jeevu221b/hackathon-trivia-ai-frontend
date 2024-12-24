@@ -36,6 +36,15 @@ struct ScreenSixMultiplayer: View {
             }
         }
         .onAppear {
+            socketHandler.socket.on("socketConnected") { data, ack in
+                AppState.isHost = false
+                AppState.inParty = false
+                AppState.partySession = ""
+                AppState.roomUsers = []
+                navigationStore.popToRoot()
+                navigationStore.push(to: .screen3)
+            }
+
             if AppState.isHost {
                 socketHandler.startGame(sessionId: AppState.partySession)
             }
@@ -123,7 +132,7 @@ struct QuizView_: View {
         @Binding var isActive: Bool
         @Binding var isAnswered: Bool
         @State var counter: Int = 0
-        var countTo: Int = 25
+        var countTo: Int = 30
         @EnvironmentObject var AppState: Game
         
         var body: some View {

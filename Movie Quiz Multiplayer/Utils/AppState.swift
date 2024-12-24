@@ -36,6 +36,17 @@ struct Users: Identifiable, Encodable, Decodable{
     let isHost: Bool
 }
 
+struct Player {
+    let username: String
+    let score: Int
+    let rank: Int
+    let lastRound: Int
+    let imageName: String
+    let isOnline: Bool
+    let id: String
+    let isHost: Bool
+}
+
 
 // Our observable object class
 class Game: ObservableObject {
@@ -47,6 +58,10 @@ class Game: ObservableObject {
     @Published var isHost = false
     @Published var user: User?
     @Published var party: Party?
+    @Published var roomUsers: [Player] = []
+    
+
+    
     @Published var isMultiplayer: Bool {
         didSet {
             UserDefaults.standard.set(isMultiplayer, forKey: "isMultiplayer")

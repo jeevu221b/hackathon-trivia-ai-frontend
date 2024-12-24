@@ -6,10 +6,6 @@ import SystemNotification
 import UIKit
 
 
-class RoomUsers: ObservableObject {
-    @Published var users: [Player] = []
-}
-
 class PartyDataModel: ObservableObject {
     @Published var levelName: String = "..."
     @Published var categoryName: String = "..."
@@ -19,39 +15,26 @@ class PartyDataModel: ObservableObject {
 
 struct PartyView: View {
     @EnvironmentObject private var socketHandler: SocketHandler
-    @StateObject private var roomUsers = RoomUsers()
+    @EnvironmentObject var AppState: Game
     @State private var isTapped = false
     @State private var isActive = false
     @StateObject private var partyDataModel = PartyDataModel()
     @State private var showBackAlert = false
     @EnvironmentObject private var navigationStore : NavigationStore
-    @EnvironmentObject var AppState: Game
     @State private var showDisconnectAlert = false
 
 
     var isCurrentUserHost: Bool {
-        print(AppState.user)
-        print(roomUsers.users)
-        if let hostUser = roomUsers.users.first(where: { $0.isHost }),
+        if let hostUser = AppState.roomUsers.first(where: { $0.isHost }),
            let currentUser = AppState.user,
            hostUser.id == currentUser.id {
-            if !AppState.isHost {
-                print("setting ishost true")
-                AppState.isHost = true
-            }
             return true
-            
-        }
-        if AppState.isHost {
-            print("setting ishost false")
-            AppState.isHost = false
         }
         return false
     }
     
-    
     var hostUsername: String {
-        if let host = roomUsers.users.first(where: { $0.isHost }) {
+        if let host =  AppState.roomUsers.first(where: { $0.isHost }) {
             return host.username
         }
         return ""
@@ -69,10 +52,7 @@ struct PartyView: View {
                         .tracking(-0.7)
                         .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
                 
-                Text(socketHandler.isConnected ? "connected" : "disconnected")
-                    .font(Font.custom("CircularSpUIv3T-Bold", size: 30))
-                    .tracking(-0.7)
-                    .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
+               
                 
             }
             .padding(.horizontal)
@@ -220,7 +200,7 @@ struct PartyView: View {
             }
             
             ScrollView {
-                GridView(players: roomUsers.users)
+                GridView(players:  AppState.roomUsers)
                     .padding(.horizontal)
             }
             .padding(.bottom)
@@ -237,7 +217,7 @@ struct PartyView: View {
             }
             let data: [String: String] = [
                 "username": name,
-                "sessionId":  AppState.partySession,
+                "sessionId": AppState.partySession,
                 "room": "test",
                 "photoURL": photoURL
             ]
@@ -266,14 +246,26 @@ struct PartyView: View {
                         }
                     }
                     DispatchQueue.main.async {
-                        roomUsers.users = newUsers
+                        AppState.roomUsers = newUsers
+                    }
+                    // Update AppState.isHost
+                    DispatchQueue.main.async {
+                        if let hostUser =  AppState.roomUsers.first(where: { $0.isHost }),
+                           let currentUser = AppState.user,
+                           hostUser.id == currentUser.id {
+                            if !AppState.isHost {
+                                AppState.isHost = true
+                            }
+                        } else {
+                            if AppState.isHost {
+                                AppState.isHost = false
+                            }
+                        }
                     }
                 }
             }
             
             socketHandler.socket.on("partyData") { data, ack in
-                print("partyData")
-                print(data)
                 if let dataDict = data[0] as? [String: String],
                    let name = dataDict["name"],
                    let value = dataDict["value"],
@@ -295,16 +287,27 @@ struct PartyView: View {
             }
             
             socketHandler.socket.on("prepareForGame") { data, ack in
-                print("prepareForGame")
                 if !AppState.isHost {
                     navigationStore.popAllLobby()
                     navigationStore.popAllScreen7()
                     navigationStore.push(to: .screen7(self.partyDataModel.levelId))
                 }
-         
             }
             
+            socketHandler.socket.on("socketConnected") { data, ack in
+                if !AppState.partySession.isEmpty {
+                    AppState.isHost = false
+                    AppState.inParty = false
+                    AppState.partySession = ""
+                    AppState.roomUsers = []
+                    navigationStore.popToRoot()
+                    navigationStore.push(to: .screen3)
+                }
+            }
+            
+
         }
+
         .onDisappear {
             NotificationCenter.default.removeObserver(self, name: .roomUsersUpdated, object: nil)
 
@@ -336,16 +339,6 @@ struct PartyView: View {
     }
 }
 
-struct Player {
-    let username: String
-    let score: Int
-    let rank: Int
-    let lastRound: Int
-    let imageName: String
-    let isOnline: Bool
-    let id: String
-    let isHost: Bool
-}
 
 struct GridView: View {
     let players: [Player]
@@ -423,6 +416,8 @@ struct PlayerView: View {
     let player: Player
     @State var isTapped = false
     @EnvironmentObject var AppState: Game
+    @EnvironmentObject private var socketHandler: SocketHandler
+
 
     
     var body: some View {
@@ -431,8 +426,6 @@ struct PlayerView: View {
                 VStack {
                     VStack {
                         if player.rank > 0 {
-                            //put this inside a view and apply this effect
-                            //.changeEffect(.jump(height: 100), value: count)
                             PlayerRankView(player: player)
                             .zIndex(2)
                         }
@@ -451,6 +444,7 @@ struct PlayerView: View {
                     
                     HStack {
                         // show "You" if the player is the current user
+                        
                         Text(AppState.user?.id == player.id ? "You" : player.username)
                             .font(Font.custom("CircularSpUIv3T-Bold", size: 15))
                             .padding(.trailing, 0)
@@ -458,12 +452,12 @@ struct PlayerView: View {
                             .tracking(-0.4)
                         
                         Circle()
-                            .fill(player.isOnline ? Color(hexStringToUIColor(hex: "3CF465")).opacity(0.4) : Color.gray)
+                            .fill((player.isOnline && socketHandler.isConnected) ? Color(hexStringToUIColor(hex: "3CF465")).opacity(0.4) : Color.gray)
                             .frame(width: 5, height: 5)
                             .offset(x: 0, y: 1)
                             .padding(.leading, -3)
                         
-                        Text(player.isOnline ? "online" : "offline")
+                        Text((player.isOnline && socketHandler.isConnected) ? "online" : "offline")
                             .font(Font.custom("CircularSpUIv3T-Book", size: 12))
                             .foregroundColor(Color(hexStringToUIColor(hex: "A5A5A5")))
                             .padding(.leading, -6)
@@ -515,8 +509,9 @@ struct PlayerView: View {
         .clipShape(RoundedRectangle(cornerRadius: 15))
         .overlay(
             RoundedRectangle(cornerRadius: 15)
-                .stroke(Color(uiColor: hexStringToUIColor(hex: player.rank == 1 ? "F9EDCC": "FFFFFF")).opacity(0.40), lineWidth: isTapped ? 17 : 14)
+                .stroke(Color(uiColor: hexStringToUIColor(hex: AppState.user?.id == player.id ? "bbbdbd": player.rank == 1 ? "F9EDCC": "FFFFFF")).opacity(0.40), lineWidth: isTapped ? 17 : 14)
         )
+        
         .onTapGesture {
             isTapped.toggle()
             withAnimation(.easeInOut(duration: 0.25)) {
