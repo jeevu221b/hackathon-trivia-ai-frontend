@@ -49,6 +49,7 @@
 		4FD900AC2C207B2500712842 /* BackAlertModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD900AB2C207B2500712842 /* BackAlertModifier.swift */; };
 		4FD9D96C2BCEB9BB002DA982 /* ScreenTwoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD9D96B2BCEB9BB002DA982 /* ScreenTwoView.swift */; };
 		4FD9D96E2BCEEC37002DA982 /* ScreenThreeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD9D96D2BCEEC37002DA982 /* ScreenThreeView.swift */; };
+		4FDA8D282C2D98CA00D7746D /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 4FDA8D272C2D98CA00D7746D /* GoogleMobileAds */; };
 		4FE4C77A2BD2814900ED5890 /* ScreenFourView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE4C7792BD2814900ED5890 /* ScreenFourView.swift */; };
 		4FE4C77C2BD6BBC800ED5890 /* ScreenFiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE4C77B2BD6BBC800ED5890 /* ScreenFiveView.swift */; };
 		4FE4C77E2BD6D76A00ED5890 /* ScreenSix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE4C77D2BD6D76A00ED5890 /* ScreenSix.swift */; };
@@ -121,6 +122,7 @@
 				4F5F2F1A2BFFF988005CFD33 /* SwiftfulLoadingIndicators in Frameworks */,
 				4FD27BDA2C0F7A8B004932C4 /* SocketIO in Frameworks */,
 				4F0C4D232BF298D100B9199B /* SystemNotification in Frameworks */,
+				4FDA8D282C2D98CA00D7746D /* GoogleMobileAds in Frameworks */,
 				4F0C4D2F2BF4E1C200B9199B /* FirebaseAuth in Frameworks */,
 				4FEB05DA2BF8D33000FEBEE2 /* SwiftfulFirebaseAuth in Frameworks */,
 				4F5F2F132BFE6763005CFD33 /* Pow in Frameworks */,
@@ -243,6 +245,7 @@
 				4F5F2F122BFE6763005CFD33 /* Pow */,
 				4F5F2F192BFFF988005CFD33 /* SwiftfulLoadingIndicators */,
 				4FD27BD92C0F7A8B004932C4 /* SocketIO */,
+				4FDA8D272C2D98CA00D7746D /* GoogleMobileAds */,
 			);
 			productName = "Movie Quiz Multiplayer";
 			productReference = 4F6F9D122BBC8FA9002E523F /* Movie Quiz Multiplayer.app */;
@@ -280,6 +283,7 @@
 				4F5F2F112BFE6763005CFD33 /* XCRemoteSwiftPackageReference "Pow" */,
 				4F5F2F182BFFF988005CFD33 /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */,
 				4FD27BD82C0F7A8B004932C4 /* XCRemoteSwiftPackageReference "socket.io-client-swift" */,
+				4FDA8D262C2D98C800D7746D /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			productRefGroup = 4F6F9D132BBC8FA9002E523F /* Products */;
 			projectDirPath = "";
@@ -615,6 +619,14 @@
 				kind = branch;
 			};
 		};
+		4FDA8D262C2D98C800D7746D /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.6.0;
+			};
+		};
 		4FEB05D82BF8D33000FEBEE2 /* XCRemoteSwiftPackageReference "SwiftfulFirebaseAuth" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulFirebaseAuth.git";
@@ -660,6 +672,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4FD27BD82C0F7A8B004932C4 /* XCRemoteSwiftPackageReference "socket.io-client-swift" */;
 			productName = SocketIO;
+		};
+		4FDA8D272C2D98CA00D7746D /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FDA8D262C2D98C800D7746D /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
 		};
 		4FEB05D92BF8D33000FEBEE2 /* SwiftfulFirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;

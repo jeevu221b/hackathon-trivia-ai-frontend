@@ -38,6 +38,8 @@ struct CreatePartyView: View {
     @EnvironmentObject var AppState: Game
     @EnvironmentObject private var navigationStore : NavigationStore
     @State private var isActive = false
+    @State private var isActive2 = false
+    @State private var isActive3 = false
     @EnvironmentObject private var socketHandler: SocketHandler
 
 
@@ -101,6 +103,13 @@ struct CreatePartyView: View {
                             )
                             .onTapGesture {
                                 isTapped.toggle()
+                                if !socketHandler.isConnected{
+                                    isActive2.toggle()
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                        isTapped.toggle()
+                                    }
+                                    return
+                                }
                                 var sessionId = ""
                                 Task {
                                     sessionId = await createSession(levelId: "", multiplayer: true) ?? ""
@@ -108,6 +117,9 @@ struct CreatePartyView: View {
                                 print("party ID")
                                 print(sessionId)
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                    if !AppState.isMultiplayer {
+                                        AppState.isMultiplayer = true
+                                    }
                                     AppState.inParty = true
                                     AppState.partySession = sessionId
                                     AppState.isHost = true
@@ -127,6 +139,14 @@ struct CreatePartyView: View {
                     
                     VStack{
                         Button(action: {
+                            if !socketHandler.isConnected{
+                                isTapped2.toggle()
+                                isActive3.toggle()
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                    isTapped2.toggle()
+                                }
+                                return
+                            }
                             if let clipboardContent = UIPasteboard.general.string, isValidObjectId(clipboardContent) {
                                 isTapped2.toggle()
                                 print("clipboard")
@@ -134,6 +154,9 @@ struct CreatePartyView: View {
                                     print(clipboardContent)
                                     AppState.inParty = true
                                     AppState.partySession = clipboardContent
+                                    if !AppState.isMultiplayer {
+                                        AppState.isMultiplayer = true
+                                    }
                                     navigationStore.push(to: .lobbyView)
 //                                }
                             } else {
@@ -203,6 +226,12 @@ struct CreatePartyView: View {
             .systemNotification(isActive: $isActive) {
                 SystemNotificationContent3()
             }
+            .systemNotification(isActive: $isActive2) {
+                SystemNotificationContent5()
+            }
+            .systemNotification(isActive: $isActive3) {
+                SystemNotificationContent6()
+            }
             
     
     }
@@ -242,14 +271,32 @@ struct SystemNotificationContent3: View {
 
 
 
-struct SystemNotificationContent4: View {
+
+
+struct SystemNotificationContent5: View {
     var body: some View {
             HStack{
-                Image(systemName: "clipboard.fill")
+                Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 15))
                     .padding(.trailing, -45)
                     .padding(.leading, 17)
-                Text("Invalid party code")
+                Text("Could not create a party")
+                    .font(.custom("CircularSpUIv3T-Bold", size: 12))
+                    .padding(.leading, 5)
+                    .padding(15)
+            
+        }
+    }
+}
+
+struct SystemNotificationContent6: View {
+    var body: some View {
+            HStack{
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 15))
+                    .padding(.trailing, -45)
+                    .padding(.leading, 17)
+                Text("Could not join the party")
                     .font(.custom("CircularSpUIv3T-Bold", size: 12))
                     .padding(.leading, 5)
                     .padding(15)
@@ -259,13 +306,16 @@ struct SystemNotificationContent4: View {
 }
 
 
+
+
+
 struct PartyCreatedView: View {
     @State var isTapped = false
     @State var isTapped2 = false
     @EnvironmentObject var AppState: Game
     @State private var isActive = false
     @EnvironmentObject private var navigationStore : NavigationStore
-    @EnvironmentObject private var socketHandler: SocketHandler
+//    @EnvironmentObject private var socketHandler: SocketHandler
 
 
 
@@ -414,14 +464,7 @@ struct PartyCreatedView: View {
             .cornerRadius(15)
             
         }.frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
-            .onAppear {
-                socketHandler.socket.on("socketConnected") { data, ack in
-                    AppState.isHost = false
-                    AppState.inParty = false
-                    AppState.partySession = ""
-                    AppState.roomUsers = []
-                }
-                
+            .onAppear {                
                 NotificationCenter.default.addObserver(forName: .roomUsersUpdated, object: nil, queue: .main) { notification in
                     if let data = notification.object as? [Any] {
                         var newUsers: [Player] = []

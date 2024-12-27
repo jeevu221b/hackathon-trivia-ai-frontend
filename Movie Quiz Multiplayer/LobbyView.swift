@@ -300,6 +300,9 @@ struct PartyView: View {
                     AppState.inParty = false
                     AppState.partySession = ""
                     AppState.roomUsers = []
+                    if AppState.isMultiplayer {
+                        AppState.isMultiplayer = false
+                    }
                     navigationStore.popToRoot()
                     navigationStore.push(to: .screen3)
                 }
@@ -322,6 +325,9 @@ struct PartyView: View {
                 secondaryButton: .destructive(Text("Leave"), action: {
                     AppState.isHost = false
                     AppState.inParty = false
+                    if AppState.isMultiplayer {
+                        AppState.isMultiplayer = false
+                    }
                     socketHandler.leaveRoom(sessionId: AppState.partySession)
                     AppState.partySession = ""
                     navigationStore.popToRoot()

@@ -64,7 +64,6 @@ class Game: ObservableObject {
     
     @Published var isMultiplayer: Bool {
         didSet {
-            UserDefaults.standard.set(isMultiplayer, forKey: "isMultiplayer")
             Task{
                 try await DataManager.shared.fetchData(isMultiplayer: isMultiplayer)
             }
@@ -72,7 +71,7 @@ class Game: ObservableObject {
     }
     
     init() {
-        self.isMultiplayer = UserDefaults.standard.bool(forKey: "isMultiplayer")
+        self.isMultiplayer = false
     }
     
     func checkLoggedInUser() {
