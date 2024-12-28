@@ -1,6 +1,12 @@
 import SwiftUI
 import SystemNotification
 import UIKit
+// Helper function to randomly pick an image name
+func getRandomImageName() -> String {
+    let imageNames = ["flame.fill", "fireworks", "laser.burst", "party.popper.fill", "flame.circle.fill"]
+    return imageNames.randomElement() ?? "flame.fill"
+}
+
 
 func isValidObjectId(_ objectId: String) -> Bool {
         let objectIdRegex = "^[0-9a-fA-F]{24}$"
@@ -252,6 +258,24 @@ struct SystemNotificationContent2: View {
     }
 }
 
+struct StreakNotification: View {
+    var text: String
+    var imageName: String
+    private let darkBackgroundColor = Color(red: 23/255, green: 24/255, blue: 25/255)
+    var body: some View {
+        HStack {
+            Image(systemName: imageName)
+                .font(.system(size: 15))
+                .foregroundColor(darkBackgroundColor)
+                .padding(.trailing, -45)
+                .padding(.leading, 17)
+            Text(text)
+                .font(.custom("CircularSpUIv3T-Bold", size: 12))
+                .padding(.leading, 5)
+                .padding(15)
+        }
+    }
+}
 
 struct SystemNotificationContent3: View {
     var body: some View {

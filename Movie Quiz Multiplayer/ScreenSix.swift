@@ -76,6 +76,7 @@ struct ScreenSix: View {
 struct QuizView: View {
     @State private var selectedAnswer: Int?
     @State private var isAnswered = false
+    @State private var showConfetti = false
     @State private var score: Int = 0
     @State private var isActive = false
 
@@ -100,6 +101,7 @@ struct QuizView: View {
     struct CountdownView: View {
         @Binding var currentQuestionIndex: Int
         @Binding var isActive: Bool
+        let toCompletedView: ()-> Void
         @State var counter: Int = 0
         var countTo: Int = 120
         @EnvironmentObject var AppState: Game
@@ -123,6 +125,7 @@ struct QuizView: View {
                     isActive = true
                     currentQuestionIndex = 10
                     AppState.isPlaying = false
+                    toCompletedView()
                 }
             }
         }
@@ -164,7 +167,7 @@ struct QuizView: View {
                                 .padding(.leading, 0)
                         
                         
-                        CountdownView(currentQuestionIndex: $currentQuestionIndex, isActive: $isActive)
+                        CountdownView(currentQuestionIndex: $currentQuestionIndex, isActive: $isActive, toCompletedView: toCompletedView)
                             .padding(.top, -9)
                             .padding(.leading, 38.5)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -249,6 +252,8 @@ struct QuizView: View {
                             onNextQuestion: nextQuestion,
                             updateScore: updateScore
                         )
+                       
+                        
                         .padding(.leading, 30)
                         .padding(.trailing, 30)
                         .padding(.top, -15)
@@ -258,13 +263,18 @@ struct QuizView: View {
                     }
                 }
             }
-        }
+        }.displayConfetti(isActive: $showConfetti)
         .navigationBarBackButtonHidden(true)
         .edgesIgnoringSafeArea(.all)
         .environmentObject(AppState)
         .systemNotification(isActive: $isActive) {
             SystemNotificationContent()
         }
+    }
+    
+    func toCompletedView(){
+        navigationStore.popAllScreen6()
+        navigationStore.push(to: .completeLevel(score, sessionId, level))
     }
     
     func nextQuestion() {
@@ -297,6 +307,12 @@ struct QuizView: View {
     func updateScore(isCorrect: Bool) {
         if isCorrect {
                 score += 10
+            if (score == 50 || score == 90) {
+                showConfetti.toggle()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    showConfetti.toggle()
+                }
+            }
         }
     }
 }

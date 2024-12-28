@@ -1,6 +1,8 @@
 import SwiftUI
 import UIKit
 import Pow
+import SystemNotification
+
 let containerWidth_: CGFloat = UIScreen.main.bounds.width - 68.0
 
 
@@ -8,6 +10,8 @@ struct ScreenSixMultiplayer: View {
     let levelId: String
     @State private var questions: [Question] = []
     @State private var isLoading = true
+    @State private var streakActive = false
+    @State private var streakText = ""
     @State private var sessionId: String = ""
     @State private var image: String = ""
     @State private var level: Int = 0
@@ -34,6 +38,9 @@ struct ScreenSixMultiplayer: View {
             } else {
                 QuizView_(questions: questions, sessionId: sessionId, level: level, levelId: levelId, image: image, currentQuestionIndex: $currentQuestionIndex, subcategoryName: subcategoryName)
             }
+        }.systemNotification(isActive: $streakActive) {
+            StreakNotification(text: streakText, imageName: getRandomImageName())
+
         }
         .onAppear {
             socketHandler.socket.on("socketConnected") { data, ack in
@@ -44,6 +51,29 @@ struct ScreenSixMultiplayer: View {
                 navigationStore.popToRoot()
                 navigationStore.push(to: .screen3)
             }
+            
+            socketHandler.socket.on("streak") { data, ack in
+                guard let data = data[0] as? [String: Any],
+                      let userId = data["userId"] as? String,
+                      let allText = data["allText"] as? String,
+                      let userText = data["userText"] as? String else {
+                    print("Invalid data received")
+                    return
+                }
+                
+                // Assuming you have a user object and a way to get the current user ID
+                let currentUserId = AppState.user?.id
+                
+                // Determine which text to use
+                let text = (currentUserId == userId) ? userText : allText
+                
+                // Set streak text
+                streakText = text
+                
+                // Toggle streak
+                streakActive.toggle()
+            }
+
 
             if AppState.isHost {
                 socketHandler.startGame(sessionId: AppState.partySession)

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4F0B280C2C30A373000F4AA9 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0B280B2C30A373000F4AA9 /* ConfettiView.swift */; };
 		4F0C4D202BF21EBB00B9199B /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0C4D1F2BF21EBB00B9199B /* Timer.swift */; };
 		4F0C4D232BF298D100B9199B /* SystemNotification in Frameworks */ = {isa = PBXBuildFile; productRef = 4F0C4D222BF298D100B9199B /* SystemNotification */; };
 		4F0C4D252BF3EE7A00B9199B /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0C4D242BF3EE7A00B9199B /* ProfileView.swift */; };
@@ -64,6 +65,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4F0B280B2C30A373000F4AA9 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		4F0C4D1F2BF21EBB00B9199B /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		4F0C4D242BF3EE7A00B9199B /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		4F0C4D352BF4E40100B9199B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -216,6 +218,7 @@
 				4F5F2F1B2C03C8D6005CFD33 /* LeaderBoardTimer.swift */,
 				4FD27BD62C0F7A3A004932C4 /* Socket.swift */,
 				4FD900AB2C207B2500712842 /* BackAlertModifier.swift */,
+				4F0B280B2C30A373000F4AA9 /* ConfettiView.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -322,6 +325,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F0B280C2C30A373000F4AA9 /* ConfettiView.swift in Sources */,
 				4F5F2F152BFF2A8E005CFD33 /* ScoreView.swift in Sources */,
 				4F6F9D182BBC8FA9002E523F /* ContentView.swift in Sources */,
 				4F3F4F9D2BE92F6C009D1A8A /* GifImageView.swift in Sources */,
