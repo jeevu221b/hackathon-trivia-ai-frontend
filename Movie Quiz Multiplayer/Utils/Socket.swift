@@ -2,7 +2,7 @@ import SocketIO
 import Foundation
 import Network
 import NotificationCenter
-
+import UIKit
 
 class SocketHandler: ObservableObject {
     let manager: SocketManager
@@ -11,6 +11,7 @@ class SocketHandler: ObservableObject {
     let queue = DispatchQueue.global(qos: .background)
     
     @Published var isConnected: Bool = true
+    var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     
     init() {
         var token = ""
@@ -70,7 +71,6 @@ class SocketHandler: ObservableObject {
               NotificationCenter.default.post(name: .roomUsersUpdated, object: data)
           }
         
-        
         // Start monitoring network connectivity
         monitor.pathUpdateHandler = { [weak self] path in
             if path.status == .satisfied {
@@ -88,15 +88,37 @@ class SocketHandler: ObservableObject {
         }
         monitor.start(queue: queue)
         
+        // Observe app state changes
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+        
         // Connect the socket
+        socket.connect()
+    }
+    
+    @objc func appDidEnterBackground() {
+        print("App entered background")
+        backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "SocketBackgroundTask") {
+            UIApplication.shared.endBackgroundTask(self.backgroundTask)
+            self.backgroundTask = .invalid
+        }
+        socket.connect()
+    }
+    
+    @objc func appWillEnterForeground() {
+        print("App will enter foreground")
+        if backgroundTask != .invalid {
+            UIApplication.shared.endBackgroundTask(backgroundTask)
+            backgroundTask = .invalid
+        }
         socket.connect()
     }
     
     func showDisconnectAlert() {
         // Show your alert here, for example using an AlertController in a SwiftUI or UIKit context
-        //send socketDisconnected event in UI for other swiftUI files
+        // Send socketDisconnected event in UI for other SwiftUI files
         NotificationCenter.default.post(name: .socketDisconnected, object: nil)
-
+        
         print("Internet connection lost. Please check your connection.")
     }
     
@@ -130,7 +152,6 @@ class SocketHandler: ObservableObject {
         ]
         socket.emit("isReadyNow", data)
     }
-
     
     func onAnswer(sessionId: String, index: Int, answer: Bool) {
         let data: [String: Any] = [
@@ -142,10 +163,7 @@ class SocketHandler: ObservableObject {
     }
 }
 
-
-
 extension Notification.Name {
     static let socketDisconnected = Notification.Name("socketDisconnected")
     static let roomUsersUpdated = Notification.Name("roomUsersUpdated")
-
 }

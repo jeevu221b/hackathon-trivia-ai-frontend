@@ -37,5 +37,9 @@
 		<string>DIN-Medium</string>
 		<string></string>
 	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>processing</string>
+	</array>
 </dict>
 </plist>
