@@ -113,4 +113,33 @@ func getSubcategoryNameByLevelId(_ levelId: String) -> String? {
 }
 
 
+// Helper function to randomly pick an image name
+func getRandomImageName() -> String {
+    let imageNames = ["flame.fill", "party.popper.fill"]
+    return imageNames.randomElement() ?? "flame.fill"
+}
 
+struct StreakNotification: View {
+    var text: String
+    var imageName: String
+
+    var body: some View {
+        HStack {
+            Image(systemName: imageName)
+                .font(.system(size: 14))
+                .foregroundColor(.red)
+                .padding(.trailing, -22)
+                .padding(.leading, 17)
+            Text(text)
+                .font(.custom("CircularSpUIv3T-Book", size: 11))
+                .foregroundColor(.black)
+                .padding(.leading, 2)
+                .padding(.trailing, 3)
+                .padding(15)
+        }
+        .background(Color.white.opacity(0.8))
+        .cornerRadius(8)
+        .opacity(0.7)
+
+    }
+}

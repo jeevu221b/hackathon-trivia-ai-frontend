@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4F0B280C2C30A373000F4AA9 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0B280B2C30A373000F4AA9 /* ConfettiView.swift */; };
+		4F0B28132C32B790000F4AA9 /* CryFetiiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0B28122C32B790000F4AA9 /* CryFetiiView.swift */; };
 		4F0C4D202BF21EBB00B9199B /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0C4D1F2BF21EBB00B9199B /* Timer.swift */; };
 		4F0C4D232BF298D100B9199B /* SystemNotification in Frameworks */ = {isa = PBXBuildFile; productRef = 4F0C4D222BF298D100B9199B /* SystemNotification */; };
 		4F0C4D252BF3EE7A00B9199B /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0C4D242BF3EE7A00B9199B /* ProfileView.swift */; };
@@ -66,6 +67,7 @@
 
 /* Begin PBXFileReference section */
 		4F0B280B2C30A373000F4AA9 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
+		4F0B28122C32B790000F4AA9 /* CryFetiiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryFetiiView.swift; sourceTree = "<group>"; };
 		4F0C4D1F2BF21EBB00B9199B /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		4F0C4D242BF3EE7A00B9199B /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		4F0C4D352BF4E40100B9199B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -219,6 +221,7 @@
 				4FD27BD62C0F7A3A004932C4 /* Socket.swift */,
 				4FD900AB2C207B2500712842 /* BackAlertModifier.swift */,
 				4F0B280B2C30A373000F4AA9 /* ConfettiView.swift */,
+				4F0B28122C32B790000F4AA9 /* CryFetiiView.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -348,6 +351,7 @@
 				4F5F2F172BFFEC0F005CFD33 /* PopcornView.swift in Sources */,
 				4F5F2F1C2C03C8D7005CFD33 /* LeaderBoardTimer.swift in Sources */,
 				4FE4C7872BD9304C00ED5890 /* AppState.swift in Sources */,
+				4F0B28132C32B790000F4AA9 /* CryFetiiView.swift in Sources */,
 				4F2D79CB2C0C970500CD68D3 /* PartyBlock.swift in Sources */,
 				4FA6E96E2BF8FF8D0001BD77 /* Menu.swift in Sources */,
 				4F6D903A2C090F2200ECBA42 /* LobbyView.swift in Sources */,

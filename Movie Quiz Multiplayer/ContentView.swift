@@ -94,6 +94,8 @@ struct SwipeGesture: ViewModifier {
                             socketHandler.leaveRoom(sessionId: AppState.partySession)
                             AppState.inParty = false
                             AppState.partySession = ""
+                            navigationStore.popAllScreen7()
+                            navigationStore.popAllLobby()
                             navigationStore.popToRoot()
                             navigationStore.push(to: .screen3)
                         } else {

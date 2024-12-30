@@ -104,6 +104,7 @@ struct ScreenTwo: View {
                             .onTapGesture {
                                 if errorMessage.isEmpty {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+                                        navigationStore.pop()
                                         navigationStore.push(to: .screen3)
                                     }
                                 } else{

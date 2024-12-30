@@ -14,6 +14,7 @@ class PartyDataModel: ObservableObject {
 }
 
 struct PartyView: View {
+    var confetti: Bool
     @EnvironmentObject private var socketHandler: SocketHandler
     @EnvironmentObject var AppState: Game
     @State private var isTapped = false
@@ -22,8 +23,11 @@ struct PartyView: View {
     @State private var showBackAlert = false
     @EnvironmentObject private var navigationStore : NavigationStore
     @State private var showDisconnectAlert = false
+    @State private var localConfetti: Bool = false
+    @State private var localCryfetti: Bool = false
 
 
+    
     var isCurrentUserHost: Bool {
         if let hostUser = AppState.roomUsers.first(where: { $0.isHost }),
            let currentUser = AppState.user,
@@ -38,6 +42,17 @@ struct PartyView: View {
             return host.username
         }
         return ""
+    }
+    
+    var isCurrentUserRankOne: Bool {
+        print("user and room")
+        print(AppState.user)
+        print(AppState.roomUsers)
+        if let currentUser = AppState.user,
+           let currentPlayer = AppState.roomUsers.first(where: { $0.id == currentUser.id }) {
+            return currentPlayer.rank == 1
+        }
+        return false
     }
 
 
@@ -192,11 +207,6 @@ struct PartyView: View {
                     .padding(.horizontal)
                     .padding(.leading, 5)
                     .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")))
-//                if roomUsers.users.count > 1 { Text("\(roomUsers.users.count)").font(Font.custom("DINAlternate-Bold", size: 30))
-//                        .tracking(-0.7)
-//                        .padding(.leading, -15)
-//                        .foregroundColor(Color(hexStringToUIColor(hex: "2C2929")).opacity(0.2))
-//                }
             }
             
             ScrollView {
@@ -206,7 +216,7 @@ struct PartyView: View {
             .padding(.bottom)
             
         }
-        .onAppear {
+            .onAppear {
             var photoURL = ""
             var name = ""
             if let user = DataManager.shared.getUser() {
@@ -262,6 +272,32 @@ struct PartyView: View {
                             }
                         }
                     }
+                    DispatchQueue.main.async {
+                        print("confetti")
+                        print(confetti)
+                        print(AppState.roomUsers)
+                        if let currentUser = AppState.user,
+                           let currentPlayer = AppState.roomUsers.first(where: { $0.id == currentUser.id }) {
+                            if currentPlayer.rank <= 3 {
+                                localConfetti = confetti  // Initialize localConfetti with the passed confetti value
+                                if localConfetti {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                                        localConfetti = false
+                                    }
+                                }
+                            } else {
+                                localCryfetti = confetti  // Initialize localConfetti with the passed confetti value
+                                if localCryfetti {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                                        localCryfetti = false
+                                    }
+                                }
+                                
+                            }
+                        }
+                    }
+                    
+                    
                 }
             }
             
@@ -310,6 +346,9 @@ struct PartyView: View {
             
 
         }
+            .displayConfetti(isActive: $localConfetti )
+            .displayCryfetti(isActive: $localCryfetti)
+        // Ensure confetti is safely unwrapped
 
         .onDisappear {
             NotificationCenter.default.removeObserver(self, name: .roomUsersUpdated, object: nil)
@@ -539,7 +578,7 @@ struct PlayerRankView: View {
                 Image(player.rank == 1 ? "goldcrown" : player.rank == 2 ? "silvercrown" : "bronzecrown")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 47, height: 47)
+                    .frame(width: 40, height: 40)
                     .padding(.bottom, -15)
                     .padding(.top, -15)
                     .padding(.leading, 15)
@@ -549,7 +588,7 @@ struct PlayerRankView: View {
                 Image("cry")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 47, height: 47)
+                    .frame(width: 40, height: 40)
                     .padding(.bottom, -15)
                     .padding(.leading, 15)
                     .zIndex(2)
@@ -563,9 +602,10 @@ struct PlayerRankView: View {
 }
 
 
-#Preview {
-    PartyView()
-        .environmentObject(NavigationStore())
-        .environmentObject(Game())
-        .environmentObject(SocketHandler())
-}
+//#Preview {
+//    @State private var confetti = false
+//    PartyView(confetti: $confetti)
+//        .environmentObject(NavigationStore())
+//        .environmentObject(Game())
+//        .environmentObject(SocketHandler())
+//}

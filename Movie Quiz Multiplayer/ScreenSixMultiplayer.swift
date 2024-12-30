@@ -44,12 +44,14 @@ struct ScreenSixMultiplayer: View {
         }
         .onAppear {
             socketHandler.socket.on("socketConnected") { data, ack in
-                AppState.isHost = false
-                AppState.inParty = false
-                AppState.partySession = ""
-                AppState.roomUsers = []
-                navigationStore.popToRoot()
-                navigationStore.push(to: .screen3)
+                if !AppState.partySession.isEmpty {
+                    AppState.isHost = false
+                    AppState.inParty = false
+                    AppState.partySession = ""
+                    AppState.roomUsers = []
+                    navigationStore.popToRoot()
+                    navigationStore.push(to: .screen3)
+                }
             }
             
             socketHandler.socket.on("streak") { data, ack in
@@ -120,7 +122,7 @@ struct ScreenSixMultiplayer: View {
                     currentQuestionIndex = 0
                     navigationStore.popAllScreen7()
                     navigationStore.popAllLobby()
-                    navigationStore.push(to: .lobbyView)
+                    navigationStore.push(to: .lobbyView(true))
                 }
             }
            
@@ -258,13 +260,13 @@ struct QuizView_: View {
                                     .foregroundColor(questionTextColor)
                                     .font(Font.custom("CircularStd-Book", size: 18))
                                     .opacity(0.3)
-                            }
+                            }.padding(.bottom, 0)
                             .frame(alignment: .trailing)
                             
                             HStack(spacing: 0) {
                                 Text("\(score)")
                                     .foregroundColor(scoreTextColor)
-                                    .font(Font.custom("CircularSpUIv3T-Bold", size: 23))
+                                    .font(Font.custom("CircularSpUIv3T-Bold", size: 24))
                                     .opacity(0.85)
                                     .changeEffect(
                                       .rise(origin: UnitPoint(x: -0.75, y: -0.25)) {
@@ -272,7 +274,7 @@ struct QuizView_: View {
                                       }, value: score)
                                     .foregroundStyle(levelTextColor)
                                 
-                            }
+                            }.padding(.top, 0)
                             .frame(alignment: .trailing)
                         }
                     }
@@ -353,8 +355,9 @@ struct QuizView_: View {
             AppState.isPlaying = false
             print(score, sessionId, level)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
-                navigationStore.popAllScreen6()
-                navigationStore.push(to: .lobbyView)
+                navigationStore.popAllScreen7()
+                navigationStore.popAllLobby()
+                navigationStore.push(to: .lobbyView(true))
                 return
             }
             

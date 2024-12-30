@@ -1,6 +1,6 @@
 import SwiftUI
 enum NavigationDestination: Hashable {
-      case screen1(Bool), screen2, screen3, screen4(String), screen5(String), screen6(String), screen7(String), leaderBoardPage, profile, completeLevel(Int, String, Int), lobbyView
+      case screen1(Bool), screen2, screen3, screen4(String), screen5(String), screen6(String), screen7(String), leaderBoardPage, profile, completeLevel(Int, String, Int), lobbyView(Bool)
     @ViewBuilder
       var view: some View {
             switch self {
@@ -22,8 +22,8 @@ enum NavigationDestination: Hashable {
                   LeaderboardView()
             case .profile:
                   UserProfileView()
-            case .lobbyView:
-                    PartyView()
+            case .lobbyView(let confetti):
+                    PartyView(confetti: confetti)
             case .completeLevel(let score, let sessionId, let level):
                   CompleteLevelView(score: score, sessionId: sessionId, level: level)
             }
