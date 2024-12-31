@@ -95,7 +95,9 @@ struct GenreButton: View {
         .scaleEffect(isTapped ? 1.5 : 1)
         .animation(.spring(response: 0.4, dampingFraction: 0.6))
         .onTapGesture {
-            socketHandler.updatePartyData(name: title , id: "subcategory", value: subcategoryId, sessionId: AppState.partySession)
+            if !AppState.partySession.isEmpty {
+                socketHandler.updatePartyData(name: title , id: "subcategory", value: subcategoryId, sessionId: AppState.partySession)
+            }
             
             withAnimation(.easeInOut(duration: 0.3)) {
                 isTapped.toggle()

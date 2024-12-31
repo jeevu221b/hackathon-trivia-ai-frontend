@@ -118,7 +118,9 @@ struct ScreenThree: View {
             .scaleEffect(isTapped1 ? 1.2 : 1)
             .animation(.spring(response: 0.4, dampingFraction: 0.6))
             .onTapGesture {
-                socketHandler.updatePartyData(name: bannerCategory.name , id: "category", value: bannerCategory.id, sessionId: AppState.partySession)
+                if !AppState.partySession.isEmpty {
+                    socketHandler.updatePartyData(name: bannerCategory.name , id: "category", value: bannerCategory.id, sessionId: AppState.partySession)
+                }
                 withAnimation(.easeInOut(duration: 0.3)) {
                     isTapped1.toggle()
                 }
