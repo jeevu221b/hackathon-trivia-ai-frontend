@@ -25,6 +25,8 @@ struct PartyView: View {
     @State private var showDisconnectAlert = false
     @State private var localConfetti: Bool = false
     @State private var localCryfetti: Bool = false
+    @State private var confettiShown: Bool = false
+    
 
 
     
@@ -278,18 +280,21 @@ struct PartyView: View {
                         print(AppState.roomUsers)
                         if let currentUser = AppState.user,
                            let currentPlayer = AppState.roomUsers.first(where: { $0.id == currentUser.id }) {
-                            if currentPlayer.rank <= 3 {
+
+                            if (currentPlayer.rank <= 3 && !confettiShown) {
                                 localConfetti = confetti  // Initialize localConfetti with the passed confetti value
                                 if localConfetti {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                                         localConfetti = false
+                                        confettiShown = true
                                     }
                                 }
-                            } else {
+                            } else if !confettiShown {
                                 localCryfetti = confetti  // Initialize localConfetti with the passed confetti value
                                 if localCryfetti {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                                         localCryfetti = false
+                                        confettiShown = true
                                     }
                                 }
                                 
@@ -497,7 +502,7 @@ struct PlayerView: View {
                             .tracking(-0.4)
                         
                         Circle()
-                            .fill((player.isOnline && socketHandler.isConnected) ? Color(hexStringToUIColor(hex: "3CF465")).opacity(0.4) : Color.gray)
+                            .fill((player.isOnline && socketHandler.isConnected) ? Color(hexStringToUIColor(hex: "28DACD")) : Color.gray)
                             .frame(width: 5, height: 5)
                             .offset(x: 0, y: 1)
                             .padding(.leading, -3)
@@ -505,7 +510,7 @@ struct PlayerView: View {
                         Text((player.isOnline && socketHandler.isConnected) ? "online" : "offline")
                             .font(Font.custom("CircularSpUIv3T-Book", size: 12))
                             .foregroundColor(Color(hexStringToUIColor(hex: "A5A5A5")))
-                            .padding(.leading, -6)
+                            .padding(.leading, -5)
                             .tracking(-0.4)
                     }
                     .padding(.top, 5)
@@ -554,7 +559,7 @@ struct PlayerView: View {
         .clipShape(RoundedRectangle(cornerRadius: 15))
         .overlay(
             RoundedRectangle(cornerRadius: 15)
-                .stroke(Color(uiColor: hexStringToUIColor(hex: AppState.user?.id == player.id ? "bbbdbd": player.rank == 1 ? "F9EDCC": "FFFFFF")).opacity(0.40), lineWidth: isTapped ? 17 : 14)
+                .stroke(Color(uiColor: hexStringToUIColor(hex: AppState.user?.id == player.id ? "AFAFAF": player.rank == 1 ? "F9EDCC": "FFFFFF")).opacity(0.40), lineWidth: isTapped ? 17 : 14)
         )
         
         .onTapGesture {
@@ -594,7 +599,7 @@ struct PlayerRankView: View {
                     .zIndex(2)
             }
         }
-        .changeEffect(.jump(height: 8), value:  player.rank <= 2 ? count : 0) // Apply the custom effect
+        .changeEffect(.jump(height: 8), value:  player.rank <= 3 ? count : 0) // Apply the custom effect
         .onReceive(timer) { _ in
             count += 1
         }
