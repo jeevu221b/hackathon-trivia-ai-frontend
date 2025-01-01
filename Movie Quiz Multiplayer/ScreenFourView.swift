@@ -33,6 +33,23 @@ struct ScreenFour: View {
                     .foregroundColor(.white)
                     .font(Font.custom("CircularSpUIv3T-Bold", size: 45))
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    VStack(alignment: .leading, spacing: 0) {
+                        HStack{
+                            Image(systemName: "bolt.fill")
+                                .foregroundColor(Color(uiColor: hexStringToUIColor(hex: "5F672D")))
+                                .font(.system(size: 12))
+                                .padding(.trailing, -4)
+                                .padding(.leading, 24)
+                            Text(cat?.subtext ?? "")
+                                .foregroundColor(.white)
+                                .opacity(0.3)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .font(Font.custom("CircularSpUIv3T-Book", size: 16))
+                                
+                                
+                        }
+                    }.padding(.bottom, 35)
                 }
                 
                 LazyVGrid(columns: columns, spacing: 15) {

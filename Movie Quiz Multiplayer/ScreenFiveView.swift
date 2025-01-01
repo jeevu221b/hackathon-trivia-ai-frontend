@@ -120,13 +120,20 @@ struct ScreenFive: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     
                     VStack(alignment: .leading, spacing: 0) {
-                        Text(subcategory?.name ?? "")
-                            .foregroundColor(.white)
-                            .opacity(0.3)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .font(Font.custom("CircularSpUIv3T-Book", size: 20))
-                            .padding(.leading, 27)
-                            .padding(.bottom, 35)
+                        HStack{
+                            Image(systemName: "bolt.fill")
+                                .foregroundColor(Color(uiColor: hexStringToUIColor(hex: "5F672D")))
+                                .font(.system(size: 12))
+                                .padding(.trailing, -4)
+                            
+                            
+                            Text(subcategory?.name ?? "")
+                                .foregroundColor(.white)
+                                .opacity(0.3)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .font(Font.custom("CircularSpUIv3T-Book", size: 20))
+                               
+                        }.padding(.leading, 27).padding(.bottom, 35)
                     }
                 }
                 
