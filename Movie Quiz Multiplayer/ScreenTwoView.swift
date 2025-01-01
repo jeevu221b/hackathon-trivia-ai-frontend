@@ -62,7 +62,7 @@ struct ScreenTwo: View {
                                 withAnimation(.easeInOut(duration: 0.3)) {
                                     appleLogin.toggle()
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                                     appleLogin.toggle()
                                     navigationStore.push(to: .screen3)
                                 }
@@ -76,7 +76,14 @@ struct ScreenTwo: View {
                                         
                                     }
                                     .frame(width: 285, height: 37)
+                                    .cornerRadius(20)
                                     .padding(15)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color(uiColor: hexStringToUIColor(hex: "FFFFFF")).opacity(0.40), lineWidth: appleLogin ? 9 : 4)
+                                            .rotationEffect(.degrees(0), anchor: .center)
+                                        
+                                    )
                                 } else {
                                     HStack {
                                         ThreeBounceAnimation(color: .white, width: CGFloat(15), height: CGFloat(15))
@@ -85,13 +92,13 @@ struct ScreenTwo: View {
                                     }
                                     .frame(width: 285, height: 37)
                                     .padding(15)
+                                    .cornerRadius(10)
                                     
                                     
                                 }
                                 
                             }
-                            
-                            .opacity(0.9)
+                            .cornerRadius(10)
                             .foregroundColor(.white)
                             .background(Color(uiColor: hexStringToUIColor(hex: "D39E8B")))
                             .cornerRadius(10)
@@ -99,8 +106,9 @@ struct ScreenTwo: View {
                             .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,  alignment: .leading)
                             .padding(.leading, 40)
                             .padding(.bottom, 15)
-                            .scaleEffect(appleLogin ? 1.04 : 1)
+                            .scaleEffect(appleLogin ? 1.08 : 1)
                             .animation(.spring(response: 0.4, dampingFraction: 0.6))
+                            
                             .onTapGesture {
                                 if errorMessage.isEmpty {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
