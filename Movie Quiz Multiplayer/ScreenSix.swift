@@ -79,6 +79,7 @@ struct QuizView: View {
     @State private var showConfetti = false
     @State private var score: Int = 0
     @State private var isActive = false
+    @State private var showLottieView = false
 
     var questions: [Question]
     var sessionId: String
@@ -105,6 +106,7 @@ struct QuizView: View {
         @State var counter: Int = 0
         var countTo: Int = 120
         @EnvironmentObject var AppState: Game
+
         
         var body: some View {
             VStack {
@@ -138,7 +140,7 @@ struct QuizView: View {
     var body: some View {
         ZStack(alignment: .top) {
              quizBackgroundColor.edgesIgnoringSafeArea(.all)
-                    
+
             
             
             VStack {
@@ -194,19 +196,41 @@ struct QuizView: View {
                             }
                             .frame(alignment: .trailing)
                             
+//                            ZStack {
+//                                            LottieView(name: "squarestill", play: .constant(showLottieView ? true : false), loopMode: .playOnce)
+//                                                .frame(width: 150, height: 150)
+//                                    
+//                                    
+//                            }
+//                            .frame(width: 30, height: 30)
+//                            .padding(.trailing, -3)
+//                            .padding(.top, -11)
+////                            .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/)
+
+                            
                             HStack(spacing: 0) {
-                                Text("\(score)")
-                                    .foregroundColor(scoreTextColor)
-                                    .font(Font.custom("CircularSpUIv3T-Bold", size: 20))
-                                    .opacity(0.65)
-                                    .changeEffect(
-                                      .rise(origin: UnitPoint(x: -0.75, y: -0.25)) {
-                                        Text("+10").font(Font.custom("CircularSpUIv3T-Bold", size: 37))
-                                      }, value: score)
-                                    .foregroundStyle(levelTextColor)
-                                
-                            }
+                                     Text("\(score)")
+                                         .foregroundColor(scoreTextColor)
+                                         .font(Font.custom("CircularSpUIv3T-Bold", size: 20))
+//                                         .opacity(0.65)
+                                         .changeEffect(
+                                             .rise(origin: UnitPoint(x: -0.75, y: -0.25)) {
+                                                 Text("+10").font(Font.custom("CircularSpUIv3T-Bold", size: 37))
+                                             }, value: score)
+                                         .foregroundStyle(levelTextColor)
+                                         .onChange(of: score) { _ in
+                                             withAnimation {
+                                                 showLottieView = true
+                                             }
+                                             DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+                                                 withAnimation {
+                                                     showLottieView = false
+                                                 }
+                                             }
+                                         }
+                             }
                             .frame(alignment: .trailing)
+//                            .padding(.top, -35)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .trailing)
@@ -263,7 +287,20 @@ struct QuizView: View {
                     }
                 }
             }
-        }.displayConfetti(isActive: $showConfetti)
+                        if showConfetti {
+            ZStack{
+                GeometryReader { geometry in
+                    LottieView(name: "celebrate", play: .constant(true), loopMode: .playOnce)
+                        .frame(width: geometry.size.width)
+                        .padding(0)
+                        .edgesIgnoringSafeArea(.all)
+                        .ignoresSafeArea(.all)
+                        .navigationBarBackButtonHidden(true)
+                        .zIndex(100)
+                }
+            }
+                        }
+        }
         .navigationBarBackButtonHidden(true)
         .edgesIgnoringSafeArea(.all)
         .environmentObject(AppState)
@@ -293,7 +330,7 @@ struct QuizView: View {
             if currentQuestionIndex < 9 {
                 AppState.isPlaying = true
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                 
                 withAnimation {
                     currentQuestionIndex += 1
@@ -309,7 +346,7 @@ struct QuizView: View {
                 score += 10
             if (score == 50 || score == 90) {
                 showConfetti.toggle()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
                     showConfetti.toggle()
                 }
             }
@@ -324,6 +361,7 @@ struct SystemNotificationContent: View {
                 .padding(.trailing, -25)
                 .padding(.leading, 10)
             Text("You've run out of time")
+                .font(Font.custom("CircularSpUIv3T-Book", size: 12))
                 .padding(.leading, 5)
                 .padding(15)
         }
@@ -344,6 +382,7 @@ struct OptionsView: View {
     let updateScore: (Bool) -> Void
     
     @State private var feedbackGenerator = UINotificationFeedbackGenerator()
+    @State private var tapLocations: [CGPoint] = Array(repeating: .zero, count: 4)
     
     private let selectedColor = Color(uiColor: hexStringToUIColor(hex: "76F6DB"))
     private let incorrectColor = Color(uiColor: hexStringToUIColor(hex: "FEC0C0"))
@@ -351,27 +390,31 @@ struct OptionsView: View {
     
     var body: some View {
         VStack(spacing: 22) {
-            ForEach(options.indices.map { Option(text: options[$0]) }) { option in
+            ForEach(options.indices.map { Option(text: options[$0]) }, id: \.id) { option in
                 OptionButton(
                     text: option.text,
                     isSelected: selectedAnswer == options.firstIndex(of: option.text),
                     isCorrect: options.firstIndex(of: option.text) == correctAnswer,
-                    isAnswered: isAnswered
+                    isAnswered: isAnswered,
+                    tapLocation: tapLocations[options.firstIndex(of: option.text) ?? 0]
                 )
-                
-                  .zIndex(1)
-                .onTapGesture {
-                    if !isAnswered {
-                        let isCorrect = options.firstIndex(of: option.text) == correctAnswer
-                        feedbackGenerator.notificationOccurred(isCorrect ? .success : .error)
-                        
-                        selectedAnswer = options.firstIndex(of: option.text)
-                        isAnswered = true
-                        updateScore(isCorrect)
-                        onNextQuestion()
-                        
-                    }
-                }
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { value in
+                            let index = options.firstIndex(of: option.text) ?? 0
+                            tapLocations[index] = value.location
+                            
+                            if !isAnswered {
+                                let isCorrect = index == correctAnswer
+                                feedbackGenerator.notificationOccurred(isCorrect ? .success : .error)
+                                
+                                selectedAnswer = index
+                                isAnswered = true
+                                updateScore(isCorrect)
+                                onNextQuestion()
+                            }
+                        }
+                )
             }
         }
     }
@@ -382,6 +425,7 @@ struct OptionButton: View {
     let isSelected: Bool
     let isCorrect: Bool
     let isAnswered: Bool
+    let tapLocation: CGPoint
     
     private let selectedColor = Color(uiColor: hexStringToUIColor(hex: "76F6DB"))
     private let incorrectColor = Color(uiColor: hexStringToUIColor(hex: "FEC0C0"))
@@ -389,14 +433,14 @@ struct OptionButton: View {
     
     var body: some View {
         Text(text)
-            .font(Font.custom("DINAlternate-Bold", size: 15))
+            .font(Font.custom("DINAlternate-Bold", size: 14))
             .foregroundColor(Color(uiColor: hexStringToUIColor(hex: "212322")))
             .padding(10)
-            .padding(.leading, 12)
-            .padding(.trailing, 12)
-            .padding(.top, 20)
-            .padding(.bottom, 20)
-            .frame(width: containerWidth)
+            .padding(.leading, 10)
+            .padding(.trailing, 10)
+            .padding(.top, 19)
+            .padding(.bottom, 19)
+            .frame(width: containerWidth_)
             .background(
                 !isAnswered ? Color.white :
                     isCorrect ? selectedColor :
@@ -410,14 +454,18 @@ struct OptionButton: View {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(Color.white.opacity(0.7), lineWidth: isAnswered && isSelected ? 10 : 0)
             )
-            .transition(.movingParts.wipe(
-                angle: .degrees(-125),
-                blurRadius: 40
-              ))
-        
+            .overlay(
+                Group {
+                    if isAnswered && isCorrect && isSelected {
+                        LottieView(name: "square", play: .constant(true), loopMode: .playOnce)
+                            .frame(width: 190, height: 190)
+                            .position(x: tapLocation.x, y: 5)
+                            .opacity(0.85)
+                    }
+                }
+            )
     }
 }
-
 
 struct ScreenSixView: PreviewProvider {
    static var previews: some View {

@@ -112,6 +112,21 @@ func getSubcategoryNameByLevelId(_ levelId: String) -> String? {
     return nil
 }
 
+func getCategoryNameByLevelId(_ levelId: String) -> String? {
+    let allLevels = DataManager.shared.getLevels()
+    let allSubcategories = DataManager.shared.getSubcategories()
+    let allCategories = DataManager.shared.getCategories()
+    
+    if let level = allLevels.first(where: { $0.id == levelId }) {
+        if let subcategory = allSubcategories.first(where: { $0.id == level.subCategory }) {
+            if let category = allCategories.first(where: { $0.id == subcategory.category }) {
+                return category.name
+            }
+        }
+    }
+    
+    return nil
+}
 
 // Helper function to randomly pick an image name
 func getRandomImageName() -> String {

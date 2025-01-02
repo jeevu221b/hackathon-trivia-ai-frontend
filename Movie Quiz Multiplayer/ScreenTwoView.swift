@@ -62,7 +62,7 @@ struct ScreenTwo: View {
                                 withAnimation(.easeInOut(duration: 0.3)) {
                                     appleLogin.toggle()
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.20) {
                                     appleLogin.toggle()
                                     navigationStore.push(to: .screen3)
                                 }
@@ -111,7 +111,9 @@ struct ScreenTwo: View {
                             
                             .onTapGesture {
                                 if errorMessage.isEmpty {
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+                                    appleLogin.toggle()
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.20) {
+                                        appleLogin.toggle()
                                         navigationStore.pop()
                                         navigationStore.push(to: .screen3)
                                     }

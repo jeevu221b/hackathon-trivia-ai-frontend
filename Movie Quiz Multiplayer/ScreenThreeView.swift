@@ -17,6 +17,14 @@ struct ScreenThree: View {
                 .padding(.top, 30)
                 .padding(.leading, 18)
                 .padding(.trailing, 20)
+//            
+//            Text("Movies and Music")
+//                .font(Font.custom("CircularSpUIv3T-Bold", size: 35))
+//                .foregroundColor(Color(uiColor: hexStringToUIColor(hex: "ABABAB"))).opacity(0.6)
+//                .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .leading)
+//                .padding(.top, 20)
+//                .padding(.leading, 20)
+            
             favoriteGenresCard
             categoryCardsScrollView
             Spacer()

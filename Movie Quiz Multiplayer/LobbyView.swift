@@ -76,6 +76,27 @@ struct PartyView: View {
             .padding(.bottom, 15)
             .padding(.leading, 5)
             
+            if isCurrentUserHost {
+                VStack{
+                    HStack{
+                        LottieView(name: "info5", play: .constant(true), loopMode: .loop)
+                            .frame(width: 42, height: 42)
+                        Text("As the host, you can go back to choose a category, subcategory, and level to start the game for everyone in the party.").foregroundColor(.black)
+                    }
+                    
+                }.font(Font.custom("CircularSpUIv3T-Book", size: 11))
+                    .frame(width: 250, alignment: .leading)
+                    .padding()
+                    .background(Color(uiColor: hexStringToUIColor(hex: "F1F1F1")))
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color(uiColor: hexStringToUIColor(hex: "FFFFFF")).opacity(0.20), lineWidth: 15)
+                    )
+                    .padding(.horizontal)
+                    .padding(.bottom, 15)
+            }
+            
             // Category Box
             ZStack {
                 VStack(alignment: .leading) {
@@ -217,7 +238,23 @@ struct PartyView: View {
             }
             .padding(.bottom)
             
-        }
+        }.overlay(
+                        Group {
+                            if localConfetti {
+                                ZStack {
+                                    GeometryReader { geometry in
+                                        LottieView(name: "celebrate", play: .constant(true), loopMode: .loop)
+                                            .frame(width: geometry.size.width)
+                                            .padding(0)
+                                            .edgesIgnoringSafeArea(.all)
+                                            .ignoresSafeArea(.all)
+                                            .navigationBarBackButtonHidden(true)
+                                            .zIndex(1000)
+                                    }
+                                }
+                        }
+            }
+        )
             .onAppear {
             var photoURL = ""
             var name = ""
@@ -281,10 +318,10 @@ struct PartyView: View {
                         if let currentUser = AppState.user,
                            let currentPlayer = AppState.roomUsers.first(where: { $0.id == currentUser.id }) {
 
-                            if (currentPlayer.rank <= 3 && !confettiShown) {
+                            if (currentPlayer.rank == 1 && !confettiShown) {
                                 localConfetti = confetti  // Initialize localConfetti with the passed confetti value
                                 if localConfetti {
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 17) {
                                         localConfetti = false
                                         confettiShown = true
                                     }
@@ -351,7 +388,7 @@ struct PartyView: View {
             
 
         }
-            .displayConfetti(isActive: $localConfetti )
+//            .displayConfetti(isActive: $localConfetti )
             .displayCryfetti(isActive: $localCryfetti)
         // Ensure confetti is safely unwrapped
 

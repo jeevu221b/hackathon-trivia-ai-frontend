@@ -20,18 +20,6 @@ struct Clock: View {
                     .animation(.easeInOut(duration: 0.5), value: scaleEffect)
             }
         }
-        .onChange(of: counter) { newValue in
-            if newValue % 15 == 0 {
-                withAnimation {
-                    scaleEffect = 1.6
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    withAnimation {
-                        scaleEffect = 1.0
-                    }
-                }
-            }
-        }
     }
     
     func counterToMinutes() -> String {

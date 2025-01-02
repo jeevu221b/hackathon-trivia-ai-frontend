@@ -28,7 +28,7 @@ struct GifImageView2: UIViewRepresentable {
                     }
                     img {
                         display: block;
-                        width: 300;
+                        width: 500;
                         height: auto;
                     }
                 </style>
@@ -63,6 +63,7 @@ struct LoadText: View{
 
 struct LoaderFullScreen: View {
     let text: String
+    @State private var imageName: String = Bool.random() ? "fire" : "cat"
     @State private var isLoading = true
     var body: some View {
         ZStack(alignment: .top){
@@ -71,11 +72,11 @@ struct LoaderFullScreen: View {
                     .scaledToFill()
                     .ignoresSafeArea(.all)
             VStack{
-                GifImageView2("fire")
-                    .frame(width: 80, height: 90)
+                GifImageView2("\(imageName)")
+                    .frame(width: 130, height: imageName == "fire" ? 150 : 90)
                     .cornerRadius(7)
                     .padding(.top, 123)
-                    .padding(.leading, 10)
+                    .padding(.leading, imageName == "fire" ? 0 : -12)
                     .opacity(/*@START_MENU_TOKEN@*/0.8/*@END_MENU_TOKEN@*/)
                 
                 if !isLoading {

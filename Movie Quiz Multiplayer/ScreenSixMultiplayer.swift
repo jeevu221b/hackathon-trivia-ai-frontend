@@ -33,7 +33,7 @@ struct ScreenSixMultiplayer: View {
                 }
                 
                 VStack {
-                    LoaderFullScreen(text:"Loading")
+                    ReadyView(levelId: levelId)
                 }
             } else {
                 QuizView_(questions: questions, sessionId: sessionId, level: level, levelId: levelId, image: image, currentQuestionIndex: $currentQuestionIndex, subcategoryName: subcategoryName)
@@ -92,6 +92,11 @@ struct ScreenSixMultiplayer: View {
                         self.subcategoryName = subcategoryName
                     } else {
                         print("No subcategory found for \(levelId)")
+                    }
+                    if let categoryName = getCategoryNameByLevelId(levelId) {
+                        print("Category name for \(levelId): \(categoryName)")
+                    } else {
+                        print("No category found for \(levelId)")
                     }
                     AppState.currentSubCategory = levelData.subCategory
                 }
@@ -260,7 +265,7 @@ struct QuizView_: View {
                                     .foregroundColor(questionTextColor)
                                     .font(Font.custom("CircularStd-Book", size: 18))
                                     .opacity(0.3)
-                            }.padding(.bottom, 0)
+                            }.padding(.bottom, -3)
                             .frame(alignment: .trailing)
                             
                             HStack(spacing: 0) {
@@ -274,7 +279,7 @@ struct QuizView_: View {
                                       }, value: score)
                                     .foregroundStyle(levelTextColor)
                                 
-                            }.padding(.top, 0)
+                            }.padding(.top, 1)
                             .frame(alignment: .trailing)
                         }
                     }
@@ -301,9 +306,9 @@ struct QuizView_: View {
                 if currentQuestionIndex < 10 {
                     VStack {
                         Text(questions[currentQuestionIndex].question)
-                            .frame(height: 190, alignment: .center)
-                            .font(Font.custom("CircularSpUIv3T-Book", size: 24))
-                            .tracking(-0.6)
+                            .frame(height: 200, alignment: .center)
+                            .font(Font.custom("CircularSpUIv3T-Book", size: 26))
+                            .tracking(-0.8)
                             .foregroundColor(questionTextColor)
                             
                             .padding()
@@ -401,6 +406,7 @@ struct OptionsView_: View {
     let updateScore: (Bool) -> Void
     
     @State private var feedbackGenerator = UINotificationFeedbackGenerator()
+    @State private var tapLocations: [CGPoint] = Array(repeating: .zero, count: 4)
     
     private let selectedColor = Color(uiColor: hexStringToUIColor(hex: "76F6DB"))
     private let incorrectColor = Color(uiColor: hexStringToUIColor(hex: "FEC0C0"))
@@ -413,18 +419,25 @@ struct OptionsView_: View {
                     text: option.text,
                     isSelected: selectedAnswer == options.firstIndex(of: option.text),
                     isCorrect: options.firstIndex(of: option.text) == correctAnswer,
-                    isAnswered: isAnswered
+                    isAnswered: isAnswered,
+                    tapLocation: tapLocations[options.firstIndex(of: option.text) ?? 0]
                 )
-                .onTapGesture {
-                    if !isAnswered {
-                        let isCorrect = options.firstIndex(of: option.text) == correctAnswer
-                        feedbackGenerator.notificationOccurred(isCorrect ? .success : .error)
-                        
-                        selectedAnswer = options.firstIndex(of: option.text)
-                        isAnswered = true
-                        updateScore(isCorrect)
-                    }
-                }
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { value in
+                            let index = options.firstIndex(of: option.text) ?? 0
+                            tapLocations[index] = value.location
+                            
+                            if !isAnswered {
+                                let isCorrect = options.firstIndex(of: option.text) == correctAnswer
+                                feedbackGenerator.notificationOccurred(isCorrect ? .success : .error)
+                                
+                                selectedAnswer = options.firstIndex(of: option.text)
+                                isAnswered = true
+                                updateScore(isCorrect)
+                            }
+                        }
+                )
             }
         }
     }
@@ -435,6 +448,9 @@ struct OptionButton_: View {
     let isSelected: Bool
     let isCorrect: Bool
     let isAnswered: Bool
+    let tapLocation: CGPoint
+    
+    @State private var showLottie = false
     
     private let selectedColor = Color(uiColor: hexStringToUIColor(hex: "76F6DB"))
     private let incorrectColor = Color(uiColor: hexStringToUIColor(hex: "FEC0C0"))
@@ -442,7 +458,7 @@ struct OptionButton_: View {
     
     var body: some View {
         Text(text)
-            .font(Font.custom("DINAlternate-Bold", size: 14))
+            .font(Font.custom("DINAlternate-Bold", size: 12))
             .foregroundColor(Color(uiColor: hexStringToUIColor(hex: "212322")))
             .padding(10)
             .padding(.leading, 10)
@@ -463,10 +479,17 @@ struct OptionButton_: View {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(Color.white.opacity(0.7), lineWidth: isAnswered && isSelected ? 10 : 0)
             )
-            .transition(.movingParts.wipe(
-                angle: .degrees(-125),
-                blurRadius: 40
-              ))
+            .overlay(
+                Group {
+                    if isAnswered && isCorrect && isSelected {
+                        LottieView(name: "square", play: .constant(true), loopMode: .playOnce)
+                            .frame(width: 190, height: 190)
+                            .position(x: tapLocation.x, y: 5)
+                            .opacity(0.85)
+                    }
+                }
+            )
+
     }
 }
 

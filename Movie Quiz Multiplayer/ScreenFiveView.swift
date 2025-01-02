@@ -1,10 +1,10 @@
 import SwiftUI
 
-
 struct FactsView: View {
     let facts: [String]
     @State private var shuffledFacts: [String] = []
     @State private var currentFactIndex = 0
+    @State private var timer: Timer? = nil
     
     var body: some View {
         VStack {
@@ -23,21 +23,33 @@ struct FactsView: View {
             shuffledFacts = facts.shuffled()
             startFactRotation()
         }
+        .onDisappear {
+            stopFactRotation()
+        }
     }
     
     private func resetCounter() {
-           currentFactIndex = 0
-       }
+        currentFactIndex = 0
+    }
     
     private func startFactRotation() {
-        Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { _ in
+        guard !shuffledFacts.isEmpty else {
+            print("No facts to display.")
+            return
+        }
+
+        timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { _ in
             withAnimation {
                 currentFactIndex = (currentFactIndex + 1) % shuffledFacts.count
             }
         }
     }
+    
+    private func stopFactRotation() {
+        timer?.invalidate()
+        timer = nil
+    }
 }
-
 
 struct CrownView: View {
     let score: Int

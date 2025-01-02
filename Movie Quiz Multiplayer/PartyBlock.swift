@@ -3,11 +3,11 @@ import SystemNotification
 import UIKit
 
 
-func isValidObjectId(_ objectId: String) -> Bool {
-        let objectIdRegex = "^[0-9a-fA-F]{24}$"
-        let objectIdTest = NSPredicate(format: "SELF MATCHES %@", objectIdRegex)
-        return objectIdTest.evaluate(with: objectId)
-    }
+func isValidPartyCode(_ code: String) -> Bool {
+    let partyCodeRegex = "^[a-z]{3}-partycode$"
+    let partyCodeTest = NSPredicate(format: "SELF MATCHES %@", partyCodeRegex)
+    return partyCodeTest.evaluate(with: code)
+}
 
 struct PartyBox: View {
     @State var isTapped = false
@@ -111,10 +111,10 @@ struct CreatePartyView: View {
                                     }
                                     return
                                 }
-                                var sessionId = ""
-                                Task {
-                                    sessionId = await createSession(levelId: "", multiplayer: true) ?? ""
-                                }
+                                
+                                let randomString = String((0..<3).map { _ in "abcdefghijklmnopqrstuvwxyz".randomElement()! })
+                                let sessionId = "\(randomString)-partycode"
+                                
                                 print("party ID")
                                 print(sessionId)
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -148,7 +148,7 @@ struct CreatePartyView: View {
                                 }
                                 return
                             }
-                            if let clipboardContent = UIPasteboard.general.string, isValidObjectId(clipboardContent) {
+                            if let clipboardContent = UIPasteboard.general.string, isValidPartyCode(clipboardContent) {
                                 isTapped2.toggle()
                                 print("clipboard")
                                     isTapped2.toggle()
