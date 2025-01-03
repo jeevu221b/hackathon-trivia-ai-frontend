@@ -69,6 +69,7 @@ struct CompleteLevelView: View {
     let negativePadding = -39
     let sessionId: String
     let level: Int
+    @State private var categoryName: String = ""
     @State private var levelId = ""
     @State private var subcategory = ""
     @State private var nextLevelId = ""
@@ -91,28 +92,37 @@ struct CompleteLevelView: View {
                 PopcornView()
             } else {
                 VStack(alignment: .center) {
-                    HStack(spacing: 0) {
-                        Image(systemName: "bolt.fill")
-                            .foregroundColor(Color(uiColor: hexStringToUIColor(hex: "5C5854")))
-                            .font(.system(size: 18))
-                            .padding(.trailing, 5)
+                    VStack(spacing: 5) {
+                        HStack(spacing: 0) {
+                            Image(systemName: "bolt.fill")
+                                .foregroundColor(Color(uiColor: hexStringToUIColor(hex: "5C5854")))
+                                .font(.system(size: 25))
+                                .padding(0)
+                                .padding(.trailing, 5)
+                            
+                            Text("Level \(level)")
+                                .foregroundColor(Color(uiColor: hexStringToUIColor(hex: "5C5854")))
+                                .tracking(-0.6)
+                                .font(Font.custom("CircularSpUIv3T-Bold", size: 38))
+                        }.padding(.leading, -21).opacity(0.9)
                         
-                        Text("Level \(level)")
-                            .foregroundColor(Color(uiColor: hexStringToUIColor(hex: "5C5854")))
-                            .tracking(-0.6)
-                            .font(Font.custom("CircularSpUIv3T-Bold", size: 25))
-                    }
-                    .padding(.leading, CGFloat(negativePadding))
-                    
-                    VStack {
                         Text("\(subcategoryName)")
-                            .font(Font.custom("CircularSpUIv3T-Book", size: 20))
+                            .font(Font.custom("CircularSpUIv3T-Book", size: 19))
                             .foregroundColor(Color(uiColor: hexStringToUIColor(hex: "5C5854")))
-                            .tracking(-0.6)
-                            .opacity(0.6)
-                    }
-                    .padding(.bottom, 100)
-                    .padding(.leading, CGFloat(negativePadding) + 13)
+                            .tracking(-0.1)
+                            .padding(.top, -7)
+                            .opacity(0.85)
+                        
+                        Text("\(categoryName)")
+                            .foregroundColor(Color(uiColor: hexStringToUIColor(hex: "5C5854")))
+                            .tracking(-0.3)
+                            .font(Font.custom("CircularSpUIv3T-Bold", size: 25))
+                            .padding(.top, 3)
+                            .opacity(0.75)
+                    }.padding(.bottom, 110)
+                        .padding(.leading, CGFloat(negativePadding) + 13)
+                    
+                    
                     
                     BigStarsView(stars: score >= 80 ? 3 : score > 50 ? 2 : score > 0 ? 1 : 0)
                         .padding(.leading, CGFloat(negativePadding))
@@ -259,6 +269,7 @@ struct CompleteLevelView: View {
         .onAppear {
             updateSession(sessionId: sessionId, score: score) { levelId, doesNextLevelExist, subcategory, nextLevelId, requiredStars in
                 self.levelId = levelId
+                print(levelId)
                 self.doesNextLevelExist = doesNextLevelExist
                 self.subcategory = subcategory
                 self.nextLevelId = nextLevelId
@@ -268,11 +279,31 @@ struct CompleteLevelView: View {
                 } else {
                     print("No subcategory found for \(levelId)")
                 }
+                
+                if let levelData = getLevel(by: levelId) {
+                    if let subcategoryName = getSubcategoryNameByLevelId(levelId) {
+                        print("Subcategory name for \(levelId): \(subcategoryName)")
+                        self.subcategoryName = subcategoryName
+                    } else {
+                        print("No subcategory found for \(levelId)")
+                    }
+                    if let categoryName = getCategoryNameByLevelId(levelId) {
+                        print("Category name for \(levelId): \(categoryName)")
+                        self.categoryName = categoryName
+                    } else {
+                        print("No category found for \(levelId)")
+                    }
+                }
+                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.35) {
                     isLoading = false
                 }
+                
+                
 
             }
+            
+
         }
     }
 }
@@ -281,7 +312,7 @@ struct CompleteLevelView: View {
 
 struct CompleteView: PreviewProvider {
    static var previews: some View {
-       CompleteLevelView(score: 50, sessionId:"6651a6a06f3090d111c58771", level: 2)
+       CompleteLevelView(score: 50, sessionId:"664088bd00f58b0e095eab68", level: 2)
            .environmentObject(Game())
            .environmentObject(NavigationStore())
        

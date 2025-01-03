@@ -1,10 +1,3 @@
-//
-//  LeaderBoardView.swift
-//  Movie Quiz Multiplayer
-//
-//  Created by Santosh pant on 07/05/24.
-//
-
 import SwiftUI
 
 struct LeaderboardButton: View {
