@@ -1,7 +1,14 @@
+//
+//  LeaderBoardView.swift
+//  Movie Quiz Multiplayer
+//
+//  Created by Santosh pant on 07/05/24.
+//
+
 import SwiftUI
 
 struct LeaderboardButton: View {
-    var containerWidth:CGFloat = UIScreen.main.bounds.width - 32.0
+    var containerWidth:CGFloat = UIScreen.main.bounds.width + 20
     var body: some View {
         VStack(alignment: .center) {
                 HStack {
@@ -29,7 +36,7 @@ struct LeaderboardButton: View {
                         
 
                         
-                    }.padding(.leading, 10)
+                    }.padding(.leading, 30)
                         .padding(5)
                         .padding(.top, -3)
                         .padding(.bottom, -3)
@@ -47,7 +54,7 @@ struct LeaderboardButton: View {
                         .scaledToFit()
                         .frame(width: 85)
                         .padding(.top, -93)
-                        .padding(.leading, 284)
+                        .padding(.leading, 310)
                         .opacity(0.95)
                         
                     

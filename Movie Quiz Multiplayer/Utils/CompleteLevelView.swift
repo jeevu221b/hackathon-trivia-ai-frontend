@@ -234,7 +234,7 @@ struct CompleteLevelView: View {
                     
                     LeaderboardButton()
                         .padding(.leading, CGFloat(negativePadding+1))
-                        .padding(.bottom, 25)
+                        .padding(.bottom, -8)
                         .scaleEffect(isTapped3 ? 1.2 : 1)
                         .onTapGesture {
                             withAnimation(.easeInOut(duration: 0.3)) {

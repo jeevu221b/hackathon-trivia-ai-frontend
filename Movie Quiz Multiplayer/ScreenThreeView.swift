@@ -29,7 +29,7 @@ struct ScreenThree: View {
             categoryCardsScrollView
             Spacer()
             LeaderboardButton()
-                .padding(.bottom, -15)
+                .padding(.bottom, -42)
                 .scaleEffect(isLeaderTapped ? 1.5 : 1)
                 .animation(.spring(response: 0.4, dampingFraction: 0.6))
                 .onTapGesture {
@@ -156,9 +156,9 @@ struct ScreenThree: View {
                     )
                 }
             }
-            .padding(.horizontal, 13)
+            .padding(.horizontal, 15)
         }
-        .padding(.top, 5)
+        .padding(.top, 12)
         .transition(.move(edge: .bottom))
     }
 }
@@ -214,7 +214,7 @@ struct CategoryCard: View {
                 .stroke(Color.white, lineWidth: isTapped ? 10 : 0)
         )
         .clipShape(RoundedRectangle(cornerRadius: 8))
-        .padding(.horizontal, 10)
+        .padding(.horizontal, 12)
         .scaleEffect(isTapped ? 1.2 : 1)
         .animation(.spring(response: 0.4, dampingFraction: 0.6))
         .onTapGesture {
